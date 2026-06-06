@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sourcing Atlas — Find Authentic US Wholesale Distributors</title>
+<meta name="description" content="AI-powered discovery of verified US wholesale distributors and suppliers, with direct links to open trade accounts." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0b0c0e;
+    --ink-2: #121419;
+    --ink-3: #1a1d24;
+    --line: rgba(255,255,255,0.08);
+    --line-2: rgba(255,255,255,0.14);
+    --cream: #f4f1ea;
+    --muted: #9a9b9f;
+    --muted-2: #6b6d72;
+    --acid: #c8ff2e;
+    --acid-dim: #a6d626;
+    --amber: #ffb347;
+    --teal: #5fe3c0;
+    --r: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'Hanken Grotesk', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(900px 500px at 15% -5%, rgba(200,255,46,0.07), transparent 60%),
+      radial-gradient(800px 600px at 95% 10%, rgba(95,227,192,0.05), transparent 55%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; opacity: 0.025; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+  /* ── Top bar ── */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 26px 0; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--acid); color: var(--ink);
+    display: grid; place-items: center;
+    font-family: 'Bricolage Grotesque'; font-weight: 800; font-size: 20px;
+    transform: rotate(-4deg);
+  }
+  .brand-name { font-family: 'Bricolage Grotesque'; font-weight: 700; font-size: 19px; letter-spacing: -0.01em; }
+  .brand-name span { color: var(--muted-2); font-weight: 400; }
+  .topbar-meta { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--muted-2); display: flex; align-items: center; gap: 8px; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 0 0 var(--acid); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(200,255,46,0.5);} 70%{box-shadow:0 0 0 7px rgba(200,255,46,0);} 100%{box-shadow:0 0 0 0 rgba(200,255,46,0);} }
+
+  /* ── Hero ── */
+  .hero { padding: 64px 0 40px; }
+  .eyebrow {
+    font-family: 'JetBrains Mono'; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--acid-dim); margin-bottom: 22px; display: inline-flex; align-items: center; gap: 10px;
+    opacity: 0; animation: rise 0.7s 0.05s forwards;
+  }
+  .eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--acid-dim); display: inline-block; }
+  h1 {
+    font-family: 'Bricolage Grotesque'; font-weight: 800;
+    font-size: clamp(40px, 7vw, 82px); line-height: 0.98; letter-spacing: -0.03em;
+    max-width: 16ch; margin-bottom: 26px;
+  }
+  h1 .l { display: block; opacity: 0; transform: translateY(28px); animation: rise 0.85s forwards; }
+  h1 .l:nth-child(1){ animation-delay: 0.12s; }
+  h1 .l:nth-child(2){ animation-delay: 0.22s; }
+  h1 .l:nth-child(3){ animation-delay: 0.32s; }
+  h1 em { font-style: italic; color: var(--acid); }
+  .lede {
+    font-size: clamp(16px, 1.6vw, 19px); color: var(--muted); max-width: 56ch; line-height: 1.65;
+    opacity: 0; animation: rise 0.8s 0.45s forwards;
+  }
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+  .stats { display: flex; gap: 40px; margin-top: 40px; flex-wrap: wrap; opacity: 0; animation: rise 0.8s 0.6s forwards; }
+  .stat-n { font-family: 'Bricolage Grotesque'; font-weight: 700; font-size: 30px; letter-spacing: -0.02em; }
+  .stat-l { font-family: 'JetBrains Mono'; font-size: 11px; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
+
+  /* ── Console ── */
+  .console {
+    margin-top: 56px;
+    background: linear-gradient(180deg, var(--ink-2), var(--ink));
+    border: 1px solid var(--line); border-radius: 22px;
+    overflow: hidden;
+    opacity: 0; animation: rise 0.9s 0.7s forwards;
+  }
+  .console-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px; border-bottom: 1px solid var(--line);
+    background: rgba(255,255,255,0.015);
+  }
+  .console-head-l { display: flex; align-items: center; gap: 14px; }
+  .dots { display: flex; gap: 7px; }
+  .dots i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .dots i:nth-child(1){ background:#ff5f57; } .dots i:nth-child(2){ background:#febc2e; } .dots i:nth-child(3){ background:#28c840; }
+  .console-title { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--muted); }
+  .console-body { padding: 30px 24px; }
+
+  .step-label { font-family: 'JetBrains Mono'; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .step-num { width: 20px; height: 20px; border-radius: 6px; background: var(--ink-3); border: 1px solid var(--line-2); color: var(--acid); display: grid; place-items: center; font-size: 11px; }
+
+  .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
+  .cat {
+    position: relative; text-align: left; cursor: pointer;
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--r);
+    padding: 16px 16px 14px; color: var(--cream);
+    transition: transform .18s cubic-bezier(.2,.8,.2,1), border-color .18s, background .18s;
+  }
+  .cat:hover { transform: translateY(-3px); border-color: var(--line-2); background: var(--ink-3); }
+  .cat .ic { font-size: 22px; color: var(--muted); margin-bottom: 12px; display: block; transition: color .18s; }
+  .cat:hover .ic { color: var(--acid); }
+  .cat .nm { font-weight: 600; font-size: 14.5px; display: block; }
+  .cat .sb { font-size: 12px; color: var(--muted-2); display: block; margin-top: 2px; }
+  .cat.on { background: var(--acid); border-color: var(--acid); color: var(--ink); }
+  .cat.on .ic, .cat.on .sb { color: rgba(11,12,14,0.7); }
+  .cat.on .nm { color: var(--ink); }
+  .cat .chk { position: absolute; top: 12px; right: 12px; opacity: 0; transform: scale(0.6); transition: .2s; color: var(--ink); font-size: 16px; }
+  .cat.on .chk { opacity: 1; transform: scale(1); }
+
+  .custom-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .inp {
+    flex: 1; min-width: 220px; background: var(--ink-2); border: 1px solid var(--line);
+    border-radius: var(--r); padding: 13px 16px; color: var(--cream); font-family: inherit; font-size: 14px;
+    transition: border-color .18s;
+  }
+  .inp:focus { outline: none; border-color: var(--acid-dim); }
+  .inp::placeholder { color: var(--muted-2); }
+
+  .actions { display: flex; gap: 12px; align-items: center; margin-top: 26px; flex-wrap: wrap; }
+  .btn {
+    font-family: inherit; font-weight: 600; font-size: 14.5px; cursor: pointer;
+    border-radius: var(--r); padding: 14px 24px; border: 1px solid var(--line-2);
+    background: var(--ink-2); color: var(--cream); display: inline-flex; align-items: center; gap: 9px;
+    transition: transform .15s, background .18s, opacity .18s;
+  }
+  .btn:hover { background: var(--ink-3); }
+  .btn:active { transform: scale(.98); }
+  .btn.go { background: var(--acid); color: var(--ink); border-color: var(--acid); font-weight: 700; }
+  .btn.go:hover { background: #d4ff52; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .btn.ghost { background: transparent; }
+  .sel-tag { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--acid-dim); }
+
+  /* ── Status ── */
+  .status { display: none; margin-top: 26px; padding: 18px 20px; background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--r); }
+  .status.show { display: block; animation: rise .5s forwards; }
+  .status-top { display: flex; align-items: center; gap: 12px; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--line-2); border-top-color: var(--acid); border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .status-txt { font-family: 'JetBrains Mono'; font-size: 13px; color: var(--muted); }
+  .progress { height: 3px; background: var(--ink-3); border-radius: 99px; margin-top: 14px; overflow: hidden; }
+  .progress i { display: block; height: 100%; width: 0; background: var(--acid); border-radius: 99px; transition: width .5s ease; }
+
+  /* ── Results ── */
+  .results { margin-top: 64px; padding-bottom: 80px; display: none; }
+  .results.show { display: block; }
+  .res-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; gap: 20px; flex-wrap: wrap; }
+  .res-head h2 { font-family: 'Bricolage Grotesque'; font-weight: 700; font-size: clamp(26px, 4vw, 38px); letter-spacing: -0.02em; }
+  .res-head h2 em { font-style: italic; color: var(--acid); }
+  .res-count { font-family: 'JetBrains Mono'; font-size: 13px; color: var(--muted-2); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+  .card {
+    background: linear-gradient(180deg, var(--ink-2), var(--ink)); border: 1px solid var(--line);
+    border-radius: 18px; padding: 22px; position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(20px); animation: rise .6s forwards;
+    transition: border-color .2s, transform .2s;
+  }
+  .card:hover { border-color: var(--line-2); transform: translateY(-4px); }
+  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, var(--acid), transparent); opacity:.5; }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .card-name { font-family: 'Bricolage Grotesque'; font-weight: 700; font-size: 19px; letter-spacing: -0.01em; line-height: 1.2; }
+  .pill { font-family: 'JetBrains Mono'; font-size: 10.5px; padding: 4px 9px; border-radius: 7px; text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
+  .pill.dist { background: rgba(95,227,192,0.12); color: var(--teal); border: 1px solid rgba(95,227,192,0.25); }
+  .pill.whole { background: rgba(200,255,46,0.12); color: var(--acid-dim); border: 1px solid rgba(200,255,46,0.22); }
+  .pill.drop { background: rgba(255,179,71,0.12); color: var(--amber); border: 1px solid rgba(255,179,71,0.25); }
+  .card-desc { font-size: 13.5px; color: var(--muted); line-height: 1.55; margin-bottom: 16px; }
+  .meta { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; padding: 14px; background: rgba(255,255,255,0.02); border-radius: 11px; border: 1px solid var(--line); }
+  .meta-row { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--muted); }
+  .meta-row i { color: var(--muted-2); font-size: 15px; width: 16px; text-align: center; }
+  .meta-row b { color: var(--cream); font-weight: 500; }
+  .yes { color: var(--teal); } .no { color: var(--muted-2); }
+  .card-links { display: flex; gap: 9px; flex-wrap: wrap; }
+  .lnk {
+    flex: 1; min-width: 0; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    border-radius: 10px; padding: 11px 12px; text-decoration: none; text-align: center;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: 1px solid var(--line-2); background: transparent; color: var(--cream); transition: background .18s;
+  }
+  .lnk:hover { background: var(--ink-3); }
+  .lnk.acc { background: var(--acid); color: var(--ink); border-color: var(--acid); }
+  .lnk.acc:hover { background: #d4ff52; }
+
+  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty i { font-size: 40px; color: var(--muted-2); display: block; margin-bottom: 14px; }
+
+  footer { border-top: 1px solid var(--line); padding: 30px 0 50px; text-align: center; }
+  footer p { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--muted-2); }
+  footer a { color: var(--acid-dim); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 0 18px; }
+    .console-body { padding: 22px 16px; }
+    .stats { gap: 26px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div class="brand-name">Sourcing<span>Atlas</span></div>
+    </div>
+    <div class="topbar-meta"><span class="live-dot"></span> AI ENGINE LIVE</div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <span class="eyebrow">Verified US Supply Network</span>
+    <h1>
+      <span class="l">Find authentic</span>
+      <span class="l">wholesale <em>distributors</em></span>
+      <span class="l">in seconds.</span>
+    </h1>
+    <p class="lede">Pick a category. Our AI scans the live web to surface legitimate US-based wholesalers and distributors — complete with direct links to open a trade account. No middlemen, no marketplaces, no guesswork.</p>
+
+    <div class="stats">
+      <div><div class="stat-n" id="s1">12+</div><div class="stat-l">Categories</div></div>
+      <div><div class="stat-n">100%</div><div class="stat-l">Web-verified</div></div>
+      <div><div class="stat-n">&lt;30s</div><div class="stat-l">Avg. search</div></div>
+      <div><div class="stat-n">US</div><div class="stat-l">Based suppliers</div></div>
+    </div>
+  </section>
+
+  <!-- Console -->
+  <section class="console">
+    <div class="console-head">
+      <div class="console-head-l">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <span class="console-title">sourcing-atlas / discovery-console</span>
+      </div>
+      <span class="console-title" id="clock"></span>
+    </div>
+    <div class="console-body">
+
+      <div class="step-label"><span class="step-num">1</span> Select a product category</div>
+      <div class="cats" id="cats"></div>
+
+      <div class="custom-row">
+        <input class="inp" id="custom" placeholder="Or type a custom category — e.g. 'organic coffee', 'LED lighting'…" />
+        <button class="btn ghost" onclick="useCustom()"><i class="ti"></i>Use this</button>
+      </div>
+
+      <div class="actions">
+        <button class="btn go" id="go" disabled onclick="run()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          Discover distributors
+        </button>
+        <button class="btn ghost" onclick="resetAll()">Reset</button>
+        <span class="sel-tag" id="selTag"></span>
+      </div>
+
+      <div class="status" id="status">
+        <div class="status-top">
+          <div class="spinner"></div>
+          <span class="status-txt" id="statusTxt">Initialising search engine…</span>
+        </div>
+        <div class="progress"><i id="bar"></i></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="results" id="results">
+    <div class="res-head">
+      <h2>Verified <em>matches</em></h2>
+      <span class="res-count" id="resCount"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <footer>
+    <p>Built with the Claude API · Results are AI-generated from live web search — always verify terms before ordering · <a href="#" onclick="resetAll();return false;">New search</a></p>
+  </footer>
+
+</div>
+
+<!-- Tabler icons for custom button -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
+
+<script>
+// ── Categories ─────────────────────────────────────────
+const CATS = [
+  ['Electronics & Gadgets','Devices, accessories','m4 4 16 0 0 16-16 0z M8 9h8 M8 13h5'],
+  ['Fashion & Apparel','Clothing, textiles','M6 4l3-1 3 2 3-2 3 1-2 4-2-1v9H8v-9l-2 1z'],
+  ['Beauty & Skincare','Cosmetics, hair care','M9 3h6l-1 5h-4z M8 8h8v11H8z'],
+  ['Home & Kitchen','Furniture, appliances','M3 11 12 3l9 8 M5 10v10h14V10'],
+  ['Toys & Baby','Kids, infant goods','M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M12 2v4 M12 18v4'],
+  ['Health & Supplements','Vitamins, fitness','M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z'],
+  ['Sports & Outdoor','Gear, equipment','M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M3 12h18 M12 3a14 14 0 0 1 0 18'],
+  ['Pet Supplies','Food, accessories','M5 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M19 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M12 20c4 0 6-3 6-6s-2-4-6-4-6 1-6 4 2 6 6 6z'],
+  ['Automotive Parts','Parts, accessories','M5 13l2-5h10l2 5 M3 13h18v5H3z M7 18v2 M17 18v2'],
+  ['Office Supplies','Stationery, gear','M5 3h14v18H5z M9 7h6 M9 11h6 M9 15h4'],
+  ['Food & Grocery','Packaged goods','M6 8h12l-1 12H7z M9 8V5a3 3 0 0 1 6 0v3'],
+  ['Jewelry & Watches','Fashion accessories','M6 3h12l3 5-9 13L3 8z M9 8h6'],
+];
+
+let selected = null;
+const catsEl = document.getElementById('cats');
+
+CATS.forEach(([name, sub, path]) => {
+  const b = document.createElement('button');
+  b.className = 'cat';
+  b.dataset.cat = name;
+  b.innerHTML = `
+    <svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>
+    <span class="nm">${name}</span>
+    <span class="sb">${sub}</span>
+    <svg class="chk" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5 9-11"/></svg>`;
+  b.onclick = () => selectCat(b, name);
+  catsEl.appendChild(b);
+});
+
+function selectCat(el, name) {
+  document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  selected = name;
+  document.getElementById('custom').value = '';
+  refresh();
+}
+function useCustom() {
+  const v = document.getElementById('custom').value.trim();
+  if (!v) return;
+  document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
+  selected = v;
+  refresh();
+}
+function refresh() {
+  const go = document.getElementById('go');
+  const tag = document.getElementById('selTag');
+  if (selected) { go.disabled = false; tag.textContent = '→ ' + selected; }
+  else { go.disabled = true; tag.textContent = ''; }
+}
+function resetAll() {
+  document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
+  selected = null;
+  document.getElementById('custom').value = '';
+  document.getElementById('go').disabled = true;
+  document.getElementById('selTag').textContent = '';
+  document.getElementById('status').classList.remove('show');
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('grid').innerHTML = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Clock ──
+function tick() {
+  const d = new Date();
+  document.getElementById('clock').textContent = d.toLocaleTimeString('en-US', { hour12:false });
+}
+setInterval(tick, 1000); tick();
+
+// ── Run search ─────────────────────────────────────────
+async function run() {
+  if (!selected) return;
+  const status = document.getElementById('status');
+  const statusTxt = document.getElementById('statusTxt');
+  const bar = document.getElementById('bar');
+  const results = document.getElementById('results');
+  const grid = document.getElementById('grid');
+  const go = document.getElementById('go');
+
+  status.classList.add('show');
+  results.classList.remove('show');
+  grid.innerHTML = '';
+  go.disabled = true;
+
+  const steps = [
+    ['Scanning the live web for suppliers…', 25],
+    ['Filtering for authentic US distributors…', 50],
+    ['Checking wholesale account availability…', 75],
+    ['Compiling verified matches…', 92],
+  ];
+  let i = 0; bar.style.width = '8%';
+  statusTxt.textContent = steps[0][0]; bar.style.width = steps[0][1] + '%';
+  const iv = setInterval(() => {
+    i = (i + 1) % steps.length;
+    statusTxt.textContent = steps[i][0];
+    bar.style.width = steps[i][1] + '%';
+  }, 3200);
+
+  try {
+    const resp = await fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ category: selected })
+    });
+    const data = await resp.json();
+    clearInterval(iv);
+    bar.style.width = '100%';
+
+    if (data.error) throw new Error(data.error);
+
+    setTimeout(() => {
+      status.classList.remove('show');
+      go.disabled = false;
+      render(data);
+    }, 450);
+
+  } catch (err) {
+    clearInterval(iv);
+    status.classList.remove('show');
+    go.disabled = false;
+    results.classList.add('show');
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v5 M12 16h.01"/></svg>
+      <div style="font-weight:600;color:var(--cream);margin-bottom:6px;">Search hit a snag</div>
+      <div style="font-size:13px;">${(err.message||'Please try again').replace(/</g,'')}. Check your API key & deployment, then retry.</div>
+    </div>`;
+    results.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function esc(s){ return String(s==null?'':s).replace(/[<>&"]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+
+function render(data) {
+  const results = document.getElementById('results');
+  const grid = document.getElementById('grid');
+  const count = document.getElementById('resCount');
+  results.classList.add('show');
+
+  const list = (data.distributors || []).filter(d => d && d.name);
+  count.textContent = list.length + ' distributor' + (list.length===1?'':'s') + ' · ' + (data.category || selected);
+
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      No verified distributors found for this category. Try a broader term.</div>`;
+    results.scrollIntoView({ behavior: 'smooth' }); return;
+  }
+
+  grid.innerHTML = list.map((d, idx) => {
+    const t = (d.type||'Wholesaler').toLowerCase();
+    const pcl = t.includes('distrib') ? 'dist' : t.includes('drop') ? 'drop' : 'whole';
+    const ws = d.wholesale_page && d.wholesale_page !== 'null' && d.wholesale_page !== null ? d.wholesale_page : null;
+    const site = d.website || '#';
+    return `<article class="card" style="animation-delay:${idx*0.06}s">
+      <div class="card-top">
+        <div class="card-name">${esc(d.name)}</div>
+        <span class="pill ${pcl}">${esc(d.type||'Wholesaler')}</span>
+      </div>
+      <p class="card-desc">${esc(d.description||'')}</p>
+      <div class="meta">
+        <div class="meta-row"><i>▦</i> Min order: <b>${esc(d.min_order||'Varies')}</b></div>
+        <div class="meta-row"><i>⊕</i> Intl shipping: <b class="${d.ships_international?'yes':'no'}">${d.ships_international?'Yes':'US only'}</b></div>
+        <div class="meta-row"><i>✦</i> Resale cert: <b class="${d.requires_resale_cert?'no':'yes'}">${d.requires_resale_cert?'Required':'Not required'}</b></div>
+      </div>
+      <div class="card-links">
+        <a class="lnk" href="${esc(site)}" target="_blank" rel="noopener">↗ Visit site</a>
+        ${ws ? `<a class="lnk acc" href="${esc(ws)}" target="_blank" rel="noopener">+ Open trade account</a>`
+             : `<a class="lnk acc" href="${esc(site)}" target="_blank" rel="noopener">+ Inquire wholesale</a>`}
+      </div>
+    </article>`;
+  }).join('');
+
+  results.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

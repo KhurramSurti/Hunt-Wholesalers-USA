@@ -1,0 +1,9 @@
+{
+  "name": "sourcing-atlas",
+  "version": "1.0.0",
+  "description": "AI-powered finder for authentic US wholesale distributors and suppliers.",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}
