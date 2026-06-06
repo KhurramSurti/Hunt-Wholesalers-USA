@@ -1,302 +1,355 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="obsidian">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sourcing Atlas — Find Authentic US Wholesale Distributors</title>
-<meta name="description" content="AI-powered discovery of verified US wholesale distributors and suppliers, with direct links to open trade accounts." />
+<title>Surti Sourcing Atlas — Authentic US Wholesale Distributors</title>
+<meta name="description" content="AI-powered discovery of verified US wholesale distributors and suppliers, filterable by state, with direct links to open trade accounts." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #0b0c0e;
-    --ink-2: #121419;
-    --ink-3: #1a1d24;
-    --line: rgba(255,255,255,0.08);
-    --line-2: rgba(255,255,255,0.14);
-    --cream: #f4f1ea;
-    --muted: #9a9b9f;
-    --muted-2: #6b6d72;
-    --acid: #c8ff2e;
-    --acid-dim: #a6d626;
-    --amber: #ffb347;
-    --teal: #5fe3c0;
-    --r: 14px;
+  /* ════════════ THEME WORLDS ════════════ */
+  html[data-theme="obsidian"] {
+    --bg:#0b0c0e; --surface:#131519; --surface-2:#191c21; --elevated:#20242b;
+    --text:#f3f0ea; --muted:#9a9ca1; --faint:#6a6c71;
+    --line:rgba(255,255,255,0.09); --line-2:rgba(255,255,255,0.16);
+    --accent:#c6fb4f; --accent-ink:#0b0c0e; --accent-2:#5fe3c0; --accent-3:#ffb24d;
+    --mesh-1:rgba(198,251,79,0.10); --mesh-2:rgba(95,227,192,0.07);
+    --grain:0.035; --shadow:0 24px 60px -28px rgba(0,0,0,0.7);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html[data-theme="midnight"] {
+    --bg:#0a0e1a; --surface:#111726; --surface-2:#161e30; --elevated:#1c2740;
+    --text:#eef2fb; --muted:#99a3bd; --faint:#5f6885;
+    --line:rgba(255,255,255,0.08); --line-2:rgba(255,255,255,0.16);
+    --accent:#4fd2ff; --accent-ink:#04101b; --accent-2:#9b8bff; --accent-3:#ff8fb0;
+    --mesh-1:rgba(79,210,255,0.13); --mesh-2:rgba(155,139,255,0.10);
+    --grain:0.03; --shadow:0 24px 60px -28px rgba(0,0,0,0.65);
+  }
+  html[data-theme="noir"] {
+    --bg:#0e0c09; --surface:#18140f; --surface-2:#1f1a13; --elevated:#271f16;
+    --text:#f4efe4; --muted:#ab9f8c; --faint:#6f6553;
+    --line:rgba(255,240,210,0.09); --line-2:rgba(255,240,210,0.18);
+    --accent:#e3bd6a; --accent-ink:#15110a; --accent-2:#cd9266; --accent-3:#9fb38a;
+    --mesh-1:rgba(227,189,106,0.12); --mesh-2:rgba(205,146,102,0.08);
+    --grain:0.04; --shadow:0 24px 60px -28px rgba(0,0,0,0.7);
+  }
+  html[data-theme="porcelain"] {
+    --bg:#f3f0e8; --surface:#fbf9f3; --surface-2:#ffffff; --elevated:#ffffff;
+    --text:#1c1a16; --muted:#6c6657; --faint:#9a9281;
+    --line:rgba(28,26,22,0.11); --line-2:rgba(28,26,22,0.20);
+    --accent:#c2562f; --accent-ink:#fbf9f3; --accent-2:#3f6b4f; --accent-3:#b08400;
+    --mesh-1:rgba(194,86,47,0.08); --mesh-2:rgba(63,107,79,0.06);
+    --grain:0.02; --shadow:0 22px 50px -26px rgba(60,40,25,0.26);
+  }
+  html[data-theme="mist"] {
+    --bg:#eaeef2; --surface:#f6f8fb; --surface-2:#ffffff; --elevated:#ffffff;
+    --text:#15202b; --muted:#5b6976; --faint:#93a0ad;
+    --line:rgba(21,32,43,0.11); --line-2:rgba(21,32,43,0.19);
+    --accent:#0f7d76; --accent-ink:#f6f8fb; --accent-2:#2d6ca3; --accent-3:#b5572a;
+    --mesh-1:rgba(15,125,118,0.08); --mesh-2:rgba(45,108,163,0.07);
+    --grain:0.02; --shadow:0 22px 50px -26px rgba(25,45,65,0.20);
+  }
+
+  :root {
+    --r-sm:10px; --r:14px; --r-lg:20px; --r-xl:28px;
+    --display:'Fraunces',Georgia,serif;
+    --body:'Hanken Grotesk',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+    --maxw:1200px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
   body {
-    background: var(--ink);
-    color: var(--cream);
-    font-family: 'Hanken Grotesk', sans-serif;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-    position: relative;
-    min-height: 100vh;
+    background:var(--bg); color:var(--text); font-family:var(--body);
+    line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    position:relative; min-height:100vh;
+    transition:background-color .5s ease, color .5s ease;
+  }
+  /* theme-morph transition on key surfaces */
+  body, .topbar, .panel, .cat, .card, .inp, .btn, .lnk, .pill, .meta, .status, .swatch, .brand-mark, footer {
+    transition: background-color .5s ease, border-color .5s ease, color .5s ease, box-shadow .5s ease;
   }
   body::before {
-    content: '';
-    position: fixed; inset: 0;
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
     background:
-      radial-gradient(900px 500px at 15% -5%, rgba(200,255,46,0.07), transparent 60%),
-      radial-gradient(800px 600px at 95% 10%, rgba(95,227,192,0.05), transparent 55%);
-    pointer-events: none; z-index: 0;
+      radial-gradient(1000px 560px at 12% -8%, var(--mesh-1), transparent 60%),
+      radial-gradient(900px 640px at 100% 6%, var(--mesh-2), transparent 58%);
+    transition:background .5s ease;
   }
   body::after {
-    content: '';
-    position: fixed; inset: 0; z-index: 0; opacity: 0.025; pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:var(--grain);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  .wrap { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .wrap { position:relative; z-index:1; max-width:var(--maxw); margin:0 auto; padding:0 32px; }
 
-  /* ── Top bar ── */
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 26px 0; }
-  .brand { display: flex; align-items: center; gap: 12px; }
+  /* ════════════ TOP BAR ════════════ */
+  .topbar {
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    padding:24px 0; flex-wrap:wrap;
+  }
+  .brand { display:flex; align-items:center; gap:13px; }
   .brand-mark {
-    width: 38px; height: 38px; border-radius: 10px;
-    background: var(--acid); color: var(--ink);
-    display: grid; place-items: center;
-    font-family: 'Bricolage Grotesque'; font-weight: 800; font-size: 20px;
-    transform: rotate(-4deg);
+    width:42px; height:42px; border-radius:12px; background:var(--accent);
+    display:grid; place-items:center; flex-shrink:0; box-shadow:0 6px 20px -6px var(--accent);
   }
-  .brand-name { font-family: 'Bricolage Grotesque'; font-weight: 700; font-size: 19px; letter-spacing: -0.01em; }
-  .brand-name span { color: var(--muted-2); font-weight: 400; }
-  .topbar-meta { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--muted-2); display: flex; align-items: center; gap: 8px; }
-  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 0 0 var(--acid); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(200,255,46,0.5);} 70%{box-shadow:0 0 0 7px rgba(200,255,46,0);} 100%{box-shadow:0 0 0 0 rgba(200,255,46,0);} }
+  .brand-mark svg { width:24px; height:24px; }
+  .brand-mark svg path { fill:var(--accent-ink); }
+  .brand-text { line-height:1.1; }
+  .brand-name { font-family:var(--display); font-weight:600; font-size:20px; letter-spacing:-0.01em; }
+  .brand-name b { font-weight:600; }
+  .brand-name span { color:var(--muted); font-weight:400; }
+  .brand-tag { font-family:var(--mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--faint); margin-top:1px; }
 
-  /* ── Hero ── */
-  .hero { padding: 64px 0 40px; }
+  .theme-switch { display:flex; align-items:center; gap:14px; }
+  .theme-label { font-family:var(--mono); font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--faint); }
+  .swatches { display:flex; gap:8px; }
+  .swatch {
+    width:26px; height:26px; border-radius:8px; cursor:pointer; position:relative;
+    border:1.5px solid var(--line-2); overflow:hidden; padding:0;
+  }
+  .swatch::after {
+    content:''; position:absolute; right:3px; bottom:3px; width:9px; height:9px; border-radius:3px;
+  }
+  .swatch[data-set="obsidian"]{ background:#0b0c0e; } .swatch[data-set="obsidian"]::after{ background:#c6fb4f; }
+  .swatch[data-set="midnight"]{ background:#0a0e1a; } .swatch[data-set="midnight"]::after{ background:#4fd2ff; }
+  .swatch[data-set="noir"]{ background:#0e0c09; } .swatch[data-set="noir"]::after{ background:#e3bd6a; }
+  .swatch[data-set="porcelain"]{ background:#f3f0e8; } .swatch[data-set="porcelain"]::after{ background:#c2562f; }
+  .swatch[data-set="mist"]{ background:#eaeef2; } .swatch[data-set="mist"]::after{ background:#0f7d76; }
+  .swatch:hover { transform:translateY(-2px); }
+  .swatch.on { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent); }
+
+  /* ════════════ HERO ════════════ */
+  .hero { padding:72px 0 32px; position:relative; }
   .eyebrow {
-    font-family: 'JetBrains Mono'; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--acid-dim); margin-bottom: 22px; display: inline-flex; align-items: center; gap: 10px;
-    opacity: 0; animation: rise 0.7s 0.05s forwards;
+    font-family:var(--mono); font-size:12px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--accent-2); margin-bottom:26px; display:inline-flex; align-items:center; gap:11px;
+    opacity:0; animation:rise .7s .05s forwards;
   }
-  .eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--acid-dim); display: inline-block; }
+  .eyebrow::before { content:''; width:30px; height:1.5px; background:var(--accent-2); display:inline-block; }
   h1 {
-    font-family: 'Bricolage Grotesque'; font-weight: 800;
-    font-size: clamp(40px, 7vw, 82px); line-height: 0.98; letter-spacing: -0.03em;
-    max-width: 16ch; margin-bottom: 26px;
+    font-family:var(--display); font-weight:500; font-size:clamp(46px,8vw,96px);
+    line-height:0.94; letter-spacing:-0.025em; max-width:14ch; margin-bottom:30px;
   }
-  h1 .l { display: block; opacity: 0; transform: translateY(28px); animation: rise 0.85s forwards; }
-  h1 .l:nth-child(1){ animation-delay: 0.12s; }
-  h1 .l:nth-child(2){ animation-delay: 0.22s; }
-  h1 .l:nth-child(3){ animation-delay: 0.32s; }
-  h1 em { font-style: italic; color: var(--acid); }
+  h1 .l { display:block; opacity:0; transform:translateY(30px); animation:rise .9s forwards; }
+  h1 .l:nth-child(1){ animation-delay:.12s; } h1 .l:nth-child(2){ animation-delay:.24s; } h1 .l:nth-child(3){ animation-delay:.36s; }
+  h1 em { font-style:italic; font-weight:400; color:var(--accent); }
   .lede {
-    font-size: clamp(16px, 1.6vw, 19px); color: var(--muted); max-width: 56ch; line-height: 1.65;
-    opacity: 0; animation: rise 0.8s 0.45s forwards;
+    font-size:clamp(16px,1.5vw,19px); color:var(--muted); max-width:54ch; line-height:1.66;
+    opacity:0; animation:rise .8s .5s forwards;
   }
-  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+  @keyframes rise { to { opacity:1; transform:translateY(0); } }
 
-  .stats { display: flex; gap: 40px; margin-top: 40px; flex-wrap: wrap; opacity: 0; animation: rise 0.8s 0.6s forwards; }
-  .stat-n { font-family: 'Bricolage Grotesque'; font-weight: 700; font-size: 30px; letter-spacing: -0.02em; }
-  .stat-l { font-family: 'JetBrains Mono'; font-size: 11px; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
+  .stats { display:flex; gap:46px; margin-top:44px; flex-wrap:wrap; opacity:0; animation:rise .8s .65s forwards; }
+  .stat-n { font-family:var(--display); font-weight:500; font-size:34px; letter-spacing:-0.02em; }
+  .stat-l { font-family:var(--mono); font-size:10.5px; color:var(--faint); text-transform:uppercase; letter-spacing:0.12em; margin-top:3px; }
 
-  /* ── Console ── */
-  .console {
-    margin-top: 56px;
-    background: linear-gradient(180deg, var(--ink-2), var(--ink));
-    border: 1px solid var(--line); border-radius: 22px;
-    overflow: hidden;
-    opacity: 0; animation: rise 0.9s 0.7s forwards;
+  /* ════════════ PANEL ════════════ */
+  .panel {
+    margin-top:60px; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--r-xl); overflow:hidden; box-shadow:var(--shadow);
+    opacity:0; animation:rise .9s .75s forwards;
   }
-  .console-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 24px; border-bottom: 1px solid var(--line);
-    background: rgba(255,255,255,0.015);
+  .panel-head {
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:20px 28px; border-bottom:1px solid var(--line);
   }
-  .console-head-l { display: flex; align-items: center; gap: 14px; }
-  .dots { display: flex; gap: 7px; }
-  .dots i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
-  .dots i:nth-child(1){ background:#ff5f57; } .dots i:nth-child(2){ background:#febc2e; } .dots i:nth-child(3){ background:#28c840; }
-  .console-title { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--muted); }
-  .console-body { padding: 30px 24px; }
+  .panel-head-l { display:flex; align-items:center; gap:13px; }
+  .panel-head-l .ping { width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 0 var(--accent); animation:ping 2.4s infinite; }
+  @keyframes ping { 0%{box-shadow:0 0 0 0 var(--accent);} 70%{box-shadow:0 0 0 8px transparent;} 100%{box-shadow:0 0 0 0 transparent;} }
+  .panel-head-title { font-family:var(--mono); font-size:12px; color:var(--muted); letter-spacing:0.04em; }
+  .panel-head .clock { font-family:var(--mono); font-size:12px; color:var(--faint); }
+  .panel-body { padding:34px 28px; }
 
-  .step-label { font-family: 'JetBrains Mono'; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
-  .step-num { width: 20px; height: 20px; border-radius: 6px; background: var(--ink-3); border: 1px solid var(--line-2); color: var(--acid); display: grid; place-items: center; font-size: 11px; }
+  .step { font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--faint); margin-bottom:18px; display:flex; align-items:center; gap:11px; }
+  .step b { width:22px; height:22px; border-radius:7px; background:var(--surface-2); border:1px solid var(--line-2); color:var(--accent); display:grid; place-items:center; font-size:11px; font-weight:500; }
+  .step .opt { text-transform:none; letter-spacing:0; color:var(--faint); }
 
-  .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
+  .cats { display:grid; grid-template-columns:repeat(auto-fill,minmax(176px,1fr)); gap:11px; }
   .cat {
-    position: relative; text-align: left; cursor: pointer;
-    background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--r);
-    padding: 16px 16px 14px; color: var(--cream);
-    transition: transform .18s cubic-bezier(.2,.8,.2,1), border-color .18s, background .18s;
+    position:relative; text-align:left; cursor:pointer; background:var(--surface-2);
+    border:1px solid var(--line); border-radius:var(--r); padding:17px 17px 15px; color:var(--text);
+    transition:transform .2s cubic-bezier(.2,.8,.2,1), border-color .2s, background .2s;
   }
-  .cat:hover { transform: translateY(-3px); border-color: var(--line-2); background: var(--ink-3); }
-  .cat .ic { font-size: 22px; color: var(--muted); margin-bottom: 12px; display: block; transition: color .18s; }
-  .cat:hover .ic { color: var(--acid); }
-  .cat .nm { font-weight: 600; font-size: 14.5px; display: block; }
-  .cat .sb { font-size: 12px; color: var(--muted-2); display: block; margin-top: 2px; }
-  .cat.on { background: var(--acid); border-color: var(--acid); color: var(--ink); }
-  .cat.on .ic, .cat.on .sb { color: rgba(11,12,14,0.7); }
-  .cat.on .nm { color: var(--ink); }
-  .cat .chk { position: absolute; top: 12px; right: 12px; opacity: 0; transform: scale(0.6); transition: .2s; color: var(--ink); font-size: 16px; }
-  .cat.on .chk { opacity: 1; transform: scale(1); }
+  .cat:hover { transform:translateY(-3px); border-color:var(--line-2); background:var(--elevated); }
+  .cat .ic { width:24px; height:24px; color:var(--muted); margin-bottom:13px; display:block; transition:color .2s; }
+  .cat:hover .ic { color:var(--accent); }
+  .cat .nm { font-weight:600; font-size:14.5px; display:block; }
+  .cat .sb { font-size:12px; color:var(--faint); display:block; margin-top:2px; }
+  .cat.on { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+  .cat.on .ic { color:var(--accent-ink); }
+  .cat.on .sb { color:var(--accent-ink); opacity:.72; }
+  .cat .chk { position:absolute; top:13px; right:13px; opacity:0; transform:scale(.5); transition:.22s; color:var(--accent-ink); }
+  .cat.on .chk { opacity:1; transform:scale(1); }
 
-  .custom-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .custom-row { display:flex; gap:11px; margin-top:15px; flex-wrap:wrap; }
   .inp {
-    flex: 1; min-width: 220px; background: var(--ink-2); border: 1px solid var(--line);
-    border-radius: var(--r); padding: 13px 16px; color: var(--cream); font-family: inherit; font-size: 14px;
-    transition: border-color .18s;
+    flex:1; min-width:230px; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:var(--r); padding:14px 17px; color:var(--text); font-family:var(--body); font-size:14.5px;
+    transition:border-color .2s, background .2s;
   }
-  .inp:focus { outline: none; border-color: var(--acid-dim); }
-  .inp::placeholder { color: var(--muted-2); }
+  .inp:focus { outline:none; border-color:var(--accent); }
+  .inp::placeholder { color:var(--faint); }
 
-  .actions { display: flex; gap: 12px; align-items: center; margin-top: 26px; flex-wrap: wrap; }
+  .state-row { display:flex; gap:16px; align-items:center; margin-top:15px; flex-wrap:wrap; }
+  .select-wrap { position:relative; min-width:280px; }
+  .inp.select { width:100%; appearance:none; -webkit-appearance:none; cursor:pointer; padding-right:44px; }
+  .inp.select option { background:var(--surface); color:var(--text); }
+  .select-chev { position:absolute; right:17px; top:50%; transform:translateY(-50%); color:var(--faint); pointer-events:none; }
+  .state-hint { font-size:12.5px; color:var(--faint); }
+
+  .actions { display:flex; gap:12px; align-items:center; margin-top:30px; flex-wrap:wrap; }
   .btn {
-    font-family: inherit; font-weight: 600; font-size: 14.5px; cursor: pointer;
-    border-radius: var(--r); padding: 14px 24px; border: 1px solid var(--line-2);
-    background: var(--ink-2); color: var(--cream); display: inline-flex; align-items: center; gap: 9px;
-    transition: transform .15s, background .18s, opacity .18s;
+    font-family:var(--body); font-weight:600; font-size:14.5px; cursor:pointer;
+    border-radius:var(--r); padding:15px 26px; border:1px solid var(--line-2);
+    background:var(--surface-2); color:var(--text); display:inline-flex; align-items:center; gap:9px;
+    transition:transform .15s, background .2s, opacity .2s, border-color .2s;
   }
-  .btn:hover { background: var(--ink-3); }
-  .btn:active { transform: scale(.98); }
-  .btn.go { background: var(--acid); color: var(--ink); border-color: var(--acid); font-weight: 700; }
-  .btn.go:hover { background: #d4ff52; }
-  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-  .btn.ghost { background: transparent; }
-  .sel-tag { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--acid-dim); }
+  .btn:hover { background:var(--elevated); }
+  .btn:active { transform:scale(.98); }
+  .btn.go { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:700; box-shadow:0 10px 30px -12px var(--accent); }
+  .btn.go:hover { filter:brightness(1.05); background:var(--accent); }
+  .btn:disabled { opacity:.4; cursor:not-allowed; transform:none; box-shadow:none; }
+  .btn.ghost { background:transparent; }
+  .sel-tag { font-family:var(--mono); font-size:12px; color:var(--accent-2); }
 
-  /* ── State dropdown ── */
-  .state-row { display: flex; gap: 14px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
-  .select-wrap { position: relative; min-width: 260px; }
-  .inp.select {
-    width: 100%; appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 42px;
-  }
-  .inp.select option { background: var(--ink-2); color: var(--cream); }
-  .select-chev { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--muted-2); pointer-events: none; }
-  .state-hint { font-size: 12.5px; color: var(--muted-2); }
+  /* status */
+  .status { display:none; margin-top:28px; padding:18px 20px; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r); }
+  .status.show { display:block; animation:rise .5s forwards; }
+  .status-top { display:flex; align-items:center; gap:12px; }
+  .spinner { width:16px; height:16px; border:2px solid var(--line-2); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; flex-shrink:0; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .status-txt { font-family:var(--mono); font-size:13px; color:var(--muted); }
+  .progress { height:3px; background:var(--elevated); border-radius:99px; margin-top:14px; overflow:hidden; }
+  .progress i { display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .5s ease; }
 
-  /* ── Find more button ── */
-  .more-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 32px; }
-  .btn.more-btn { background: var(--ink-2); border: 1px dashed var(--line-2); color: var(--cream); padding: 15px 28px; }
-  .btn.more-btn:hover { border-color: var(--acid-dim); color: var(--acid); }
-  .btn.more-btn:disabled { opacity: .45; }
-  .more-hint { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--muted-2); }
+  /* ════════════ RESULTS ════════════ */
+  .results { margin-top:72px; padding-bottom:40px; display:none; }
+  .results.show { display:block; }
+  .res-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:30px; }
+  .res-head h2 { font-family:var(--display); font-weight:500; font-size:clamp(28px,4.4vw,44px); letter-spacing:-0.025em; }
+  .res-head h2 em { font-style:italic; color:var(--accent); }
+  .res-count { font-family:var(--mono); font-size:13px; color:var(--faint); }
 
-  /* ── Status ── */
-  .status { display: none; margin-top: 26px; padding: 18px 20px; background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--r); }
-  .status.show { display: block; animation: rise .5s forwards; }
-  .status-top { display: flex; align-items: center; gap: 12px; }
-  .spinner { width: 16px; height: 16px; border: 2px solid var(--line-2); border-top-color: var(--acid); border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .status-txt { font-family: 'JetBrains Mono'; font-size: 13px; color: var(--muted); }
-  .progress { height: 3px; background: var(--ink-3); border-radius: 99px; margin-top: 14px; overflow: hidden; }
-  .progress i { display: block; height: 100%; width: 0; background: var(--acid); border-radius: 99px; transition: width .5s ease; }
-
-  /* ── Results ── */
-  .results { margin-top: 64px; padding-bottom: 80px; display: none; }
-  .results.show { display: block; }
-  .res-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; gap: 20px; flex-wrap: wrap; }
-  .res-head h2 { font-family: 'Bricolage Grotesque'; font-weight: 700; font-size: clamp(26px, 4vw, 38px); letter-spacing: -0.02em; }
-  .res-head h2 em { font-style: italic; color: var(--acid); }
-  .res-count { font-family: 'JetBrains Mono'; font-size: 13px; color: var(--muted-2); }
-
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 16px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:18px; }
   .card {
-    background: linear-gradient(180deg, var(--ink-2), var(--ink)); border: 1px solid var(--line);
-    border-radius: 18px; padding: 22px; position: relative; overflow: hidden;
-    opacity: 0; transform: translateY(20px); animation: rise .6s forwards;
-    transition: border-color .2s, transform .2s;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+    padding:24px; position:relative; overflow:hidden;
+    opacity:0; transform:translateY(22px); animation:rise .6s forwards;
+    transition:border-color .25s, transform .25s, box-shadow .25s;
   }
-  .card:hover { border-color: var(--line-2); transform: translateY(-4px); }
-  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, var(--acid), transparent); opacity:.5; }
-  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
-  .card-name { font-family: 'Bricolage Grotesque'; font-weight: 700; font-size: 19px; letter-spacing: -0.01em; line-height: 1.2; }
-  .pill { font-family: 'JetBrains Mono'; font-size: 10.5px; padding: 4px 9px; border-radius: 7px; text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
-  .pill.dist { background: rgba(95,227,192,0.12); color: var(--teal); border: 1px solid rgba(95,227,192,0.25); }
-  .pill.whole { background: rgba(200,255,46,0.12); color: var(--acid-dim); border: 1px solid rgba(200,255,46,0.22); }
-  .pill.drop { background: rgba(255,179,71,0.12); color: var(--amber); border: 1px solid rgba(255,179,71,0.25); }
-  .card-desc { font-size: 13.5px; color: var(--muted); line-height: 1.55; margin-bottom: 16px; }
-  .meta { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; padding: 14px; background: rgba(255,255,255,0.02); border-radius: 11px; border: 1px solid var(--line); }
-  .meta-row { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--muted); }
-  .meta-row i { color: var(--muted-2); font-size: 15px; width: 16px; text-align: center; }
-  .meta-row b { color: var(--cream); font-weight: 500; }
-  .yes { color: var(--teal); } .no { color: var(--muted-2); }
-  .card-links { display: flex; gap: 9px; flex-wrap: wrap; }
+  .card:hover { border-color:var(--line-2); transform:translateY(-5px); box-shadow:var(--shadow); }
+  .card-idx { font-family:var(--display); font-style:italic; font-size:15px; color:var(--faint); position:absolute; top:20px; right:24px; }
+  .card-name { font-family:var(--display); font-weight:600; font-size:21px; letter-spacing:-0.01em; line-height:1.15; max-width:80%; margin-bottom:11px; }
+  .pill { font-family:var(--mono); font-size:10.5px; padding:4px 10px; border-radius:7px; text-transform:uppercase; letter-spacing:.06em; display:inline-block; margin-bottom:13px; }
+  .pill.dist { background:color-mix(in srgb, var(--accent-2) 16%, transparent); color:var(--accent-2); }
+  .pill.whole { background:color-mix(in srgb, var(--accent) 18%, transparent); color:color-mix(in srgb, var(--accent) 70%, var(--text)); }
+  .pill.drop { background:color-mix(in srgb, var(--accent-3) 18%, transparent); color:var(--accent-3); }
+  .card-desc { font-size:13.5px; color:var(--muted); line-height:1.58; margin-bottom:17px; }
+  .meta { display:flex; flex-direction:column; gap:9px; margin-bottom:17px; padding:15px; background:var(--surface-2); border-radius:12px; border:1px solid var(--line); }
+  .meta-row { display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--muted); }
+  .meta-row .mi { color:var(--faint); width:15px; text-align:center; flex-shrink:0; font-size:13px; }
+  .meta-row b { color:var(--text); font-weight:600; }
+  .yes { color:var(--accent-2); } .no { color:var(--faint); }
+  .card-links { display:flex; gap:9px; flex-wrap:wrap; }
   .lnk {
-    flex: 1; min-width: 0; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
-    border-radius: 10px; padding: 11px 12px; text-decoration: none; text-align: center;
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    border: 1px solid var(--line-2); background: transparent; color: var(--cream); transition: background .18s;
+    flex:1; min-width:0; font-family:var(--body); font-size:13px; font-weight:600; cursor:pointer;
+    border-radius:11px; padding:12px; text-decoration:none; text-align:center;
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    border:1px solid var(--line-2); background:transparent; color:var(--text); transition:background .2s, border-color .2s;
   }
-  .lnk:hover { background: var(--ink-3); }
-  .lnk.acc { background: var(--acid); color: var(--ink); border-color: var(--acid); }
-  .lnk.acc:hover { background: #d4ff52; }
+  .lnk:hover { background:var(--elevated); }
+  .lnk.acc { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .lnk.acc:hover { filter:brightness(1.05); }
 
-  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .empty i { font-size: 40px; color: var(--muted-2); display: block; margin-bottom: 14px; }
+  .more-wrap { display:flex; flex-direction:column; align-items:center; gap:13px; margin-top:38px; }
+  .btn.more-btn { background:var(--surface); border:1px dashed var(--line-2); padding:16px 30px; }
+  .btn.more-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .more-hint { font-family:var(--mono); font-size:12px; color:var(--faint); text-align:center; }
 
-  footer { border-top: 1px solid var(--line); padding: 30px 0 50px; text-align: center; }
-  footer p { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--muted-2); }
-  footer a { color: var(--acid-dim); text-decoration: none; }
+  .empty { text-align:center; padding:56px 20px; color:var(--muted); grid-column:1/-1; }
+  .empty svg { width:38px; height:38px; color:var(--faint); margin-bottom:14px; }
 
-  @media (max-width: 600px) {
-    .wrap { padding: 0 18px; }
-    .console-body { padding: 22px 16px; }
-    .stats { gap: 26px; }
+  footer { border-top:1px solid var(--line); margin-top:60px; padding:28px 0 56px; text-align:center; }
+  footer p { font-family:var(--mono); font-size:11.5px; color:var(--faint); line-height:1.8; }
+  footer a { color:var(--accent-2); text-decoration:none; cursor:pointer; }
+
+  @media (max-width:640px){
+    .wrap { padding:0 18px; }
+    .panel-body { padding:24px 16px; }
+    .stats { gap:28px; }
+    .theme-label { display:none; }
+    .card-name { max-width:72%; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- Top bar -->
-  <div class="topbar">
+  <!-- TOP BAR -->
+  <header class="topbar">
     <div class="brand">
-      <div class="brand-mark">S</div>
-      <div class="brand-name">Sourcing<span>Atlas</span></div>
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 1.5l2.4 7.1 7.1 2.4-7.1 2.4L12 22.5l-2.4-7.1L2.5 13l7.1-2.4z"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name"><b>Surti</b> <span>Sourcing Atlas</span></div>
+        <div class="brand-tag">Verified US Supply Network</div>
+      </div>
     </div>
-    <div class="topbar-meta"><span class="live-dot"></span> AI ENGINE LIVE</div>
-  </div>
+    <div class="theme-switch">
+      <span class="theme-label">Theme</span>
+      <div class="swatches" id="swatches">
+        <button class="swatch" data-set="obsidian" title="Obsidian" onclick="setTheme('obsidian')"></button>
+        <button class="swatch" data-set="midnight" title="Midnight" onclick="setTheme('midnight')"></button>
+        <button class="swatch" data-set="noir" title="Noir Gold" onclick="setTheme('noir')"></button>
+        <button class="swatch" data-set="porcelain" title="Porcelain" onclick="setTheme('porcelain')"></button>
+        <button class="swatch" data-set="mist" title="Mist" onclick="setTheme('mist')"></button>
+      </div>
+    </div>
+  </header>
 
-  <!-- Hero -->
+  <!-- HERO -->
   <section class="hero">
-    <span class="eyebrow">Verified US Supply Network</span>
+    <span class="eyebrow">Sourcing intelligence, on demand</span>
     <h1>
-      <span class="l">Find authentic</span>
-      <span class="l">wholesale <em>distributors</em></span>
-      <span class="l">in seconds.</span>
+      <span class="l">Your atlas to</span>
+      <span class="l">authentic <em>wholesale</em></span>
+      <span class="l">distributors.</span>
     </h1>
-    <p class="lede">Pick a category. Our AI scans the live web to surface legitimate US-based wholesalers and distributors — complete with direct links to open a trade account. No middlemen, no marketplaces, no guesswork.</p>
-
+    <p class="lede">Choose a category, filter by state, and let the AI map real US-based distributors and wholesalers — each with a direct link to open a trade account. No marketplaces, no middlemen, no guesswork.</p>
     <div class="stats">
-      <div><div class="stat-n" id="s1">12+</div><div class="stat-l">Categories</div></div>
-      <div><div class="stat-n">100%</div><div class="stat-l">Web-verified</div></div>
-      <div><div class="stat-n">&lt;30s</div><div class="stat-l">Avg. search</div></div>
-      <div><div class="stat-n">US</div><div class="stat-l">Based suppliers</div></div>
+      <div><div class="stat-n">50</div><div class="stat-l">States covered</div></div>
+      <div><div class="stat-n">Live</div><div class="stat-l">Web-verified</div></div>
+      <div><div class="stat-n">Direct</div><div class="stat-l">Trade accounts</div></div>
+      <div><div class="stat-n">∞</div><div class="stat-l">Keep digging</div></div>
     </div>
   </section>
 
-  <!-- Console -->
-  <section class="console">
-    <div class="console-head">
-      <div class="console-head-l">
-        <div class="dots"><i></i><i></i><i></i></div>
-        <span class="console-title">sourcing-atlas / discovery-console</span>
-      </div>
-      <span class="console-title" id="clock"></span>
+  <!-- PANEL -->
+  <section class="panel">
+    <div class="panel-head">
+      <div class="panel-head-l"><span class="ping"></span><span class="panel-head-title">discovery engine</span></div>
+      <span class="clock" id="clock"></span>
     </div>
-    <div class="console-body">
+    <div class="panel-body">
 
-      <div class="step-label"><span class="step-num">1</span> Select a product category</div>
+      <div class="step"><b>1</b> Select a product category</div>
       <div class="cats" id="cats"></div>
 
       <div class="custom-row">
         <input class="inp" id="custom" placeholder="Or type a custom category — e.g. 'organic coffee', 'LED lighting'…" />
-        <button class="btn ghost" onclick="useCustom()"><i class="ti"></i>Use this</button>
+        <button class="btn ghost" onclick="useCustom()">Use this</button>
       </div>
 
-      <div class="step-label" style="margin-top:28px;"><span class="step-num">2</span> Filter by US state <span style="text-transform:none;letter-spacing:0;color:var(--muted-2);">(optional)</span></div>
+      <div class="step" style="margin-top:30px;"><b>2</b> Filter by US state <span class="opt">(optional)</span></div>
       <div class="state-row">
         <div class="select-wrap">
           <select class="inp select" id="state">
             <option value="All States">All States — nationwide</option>
           </select>
-          <svg class="select-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="select-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
         </div>
         <span class="state-hint">Pick a state to find suppliers based there, or leave on “All States”.</span>
       </div>
@@ -311,17 +364,14 @@
       </div>
 
       <div class="status" id="status">
-        <div class="status-top">
-          <div class="spinner"></div>
-          <span class="status-txt" id="statusTxt">Initialising search engine…</span>
-        </div>
+        <div class="status-top"><div class="spinner"></div><span class="status-txt" id="statusTxt">Initialising…</span></div>
         <div class="progress"><i id="bar"></i></div>
       </div>
 
     </div>
   </section>
 
-  <!-- Results -->
+  <!-- RESULTS -->
   <section class="results" id="results">
     <div class="res-head">
       <h2>Verified <em>matches</em></h2>
@@ -338,72 +388,77 @@
   </section>
 
   <footer>
-    <p>Built with the Claude API · Results are AI-generated from live web search — always verify terms before ordering · <a href="#" onclick="resetAll();return false;">New search</a></p>
+    <p>Surti Sourcing Atlas · Built with the Claude API · Results are AI-generated from live web search — always verify terms before ordering · <a onclick="resetAll()">New search</a></p>
   </footer>
 
 </div>
 
-<!-- Tabler icons for custom button -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
-
 <script>
-// ── Categories ─────────────────────────────────────────
+// ════════════ THEMES ════════════
+function setTheme(name){
+  document.documentElement.setAttribute('data-theme', name);
+  document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('on', s.dataset.set === name));
+  try { localStorage.setItem('ssa-theme', name); } catch(e){}
+}
+(function(){
+  let saved = 'obsidian';
+  try { saved = localStorage.getItem('ssa-theme') || 'obsidian'; } catch(e){}
+  setTheme(saved);
+})();
+
+// ════════════ CATEGORIES ════════════
 const CATS = [
-  ['Electronics & Gadgets','Devices, accessories','m4 4 16 0 0 16-16 0z M8 9h8 M8 13h5'],
-  ['Fashion & Apparel','Clothing, textiles','M6 4l3-1 3 2 3-2 3 1-2 4-2-1v9H8v-9l-2 1z'],
-  ['Beauty & Skincare','Cosmetics, hair care','M9 3h6l-1 5h-4z M8 8h8v11H8z'],
-  ['Home & Kitchen','Furniture, appliances','M3 11 12 3l9 8 M5 10v10h14V10'],
-  ['Toys & Baby','Kids, infant goods','M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M12 2v4 M12 18v4'],
+  ['Electronics & Gadgets','Devices, accessories','M4 5h16v11H4z M9 20h6 M12 16v4'],
+  ['Fashion & Apparel','Clothing, textiles','M8 4l-4 3 2 3 2-1v8h8v-8l2 1 2-3-4-3-2 2-2-2z'],
+  ['Beauty & Skincare','Cosmetics, hair','M9 3h6l-1 4h-4z M8 7h8v12H8z'],
+  ['Home & Kitchen','Furniture, goods','M3 11 12 3l9 8 M5 10v10h14V10'],
+  ['Toys & Baby','Kids, infants','M12 8a4 4 0 100 8 4 4 0 000-8z M12 2v4 M12 18v4'],
   ['Health & Supplements','Vitamins, fitness','M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z'],
-  ['Sports & Outdoor','Gear, equipment','M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M3 12h18 M12 3a14 14 0 0 1 0 18'],
-  ['Pet Supplies','Food, accessories','M5 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M19 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M12 20c4 0 6-3 6-6s-2-4-6-4-6 1-6 4 2 6 6 6z'],
+  ['Sports & Outdoor','Gear, equipment','M12 3a9 9 0 100 18 9 9 0 000-18z M3 12h18 M12 3a14 14 0 010 18'],
+  ['Pet Supplies','Food, accessories','M5 9a2 2 0 100-4 2 2 0 000 4z M19 9a2 2 0 100-4 2 2 0 000 4z M12 20c4 0 6-3 6-6s-2-4-6-4-6 1-6 4 2 6 6 6z'],
   ['Automotive Parts','Parts, accessories','M5 13l2-5h10l2 5 M3 13h18v5H3z M7 18v2 M17 18v2'],
   ['Office Supplies','Stationery, gear','M5 3h14v18H5z M9 7h6 M9 11h6 M9 15h4'],
-  ['Food & Grocery','Packaged goods','M6 8h12l-1 12H7z M9 8V5a3 3 0 0 1 6 0v3'],
-  ['Jewelry & Watches','Fashion accessories','M6 3h12l3 5-9 13L3 8z M9 8h6'],
+  ['Food & Grocery','Packaged goods','M6 8h12l-1 12H7z M9 8V5a3 3 0 016 0v3'],
+  ['Jewelry & Watches','Accessories','M6 3h12l3 5-9 13L3 8z M9 8h6'],
 ];
-
 let selected = null;
 const catsEl = document.getElementById('cats');
-
 CATS.forEach(([name, sub, path]) => {
   const b = document.createElement('button');
-  b.className = 'cat';
-  b.dataset.cat = name;
+  b.className = 'cat'; b.dataset.cat = name;
   b.innerHTML = `
-    <svg class="ic" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>
-    <span class="nm">${name}</span>
-    <span class="sb">${sub}</span>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>
+    <span class="nm">${name}</span><span class="sb">${sub}</span>
     <svg class="chk" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5 9-11"/></svg>`;
   b.onclick = () => selectCat(b, name);
   catsEl.appendChild(b);
 });
-
-function selectCat(el, name) {
+function selectCat(el, name){
   document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
-  el.classList.add('on');
-  selected = name;
-  document.getElementById('custom').value = '';
-  refresh();
+  el.classList.add('on'); selected = name;
+  document.getElementById('custom').value = ''; refresh();
 }
-function useCustom() {
-  const v = document.getElementById('custom').value.trim();
-  if (!v) return;
+function useCustom(){
+  const v = document.getElementById('custom').value.trim(); if(!v) return;
   document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
-  selected = v;
-  refresh();
+  selected = v; refresh();
 }
-function refresh() {
-  const go = document.getElementById('go');
-  const tag = document.getElementById('selTag');
-  if (selected) { go.disabled = false; tag.textContent = '→ ' + selected; }
+function refresh(){
+  const go = document.getElementById('go'), tag = document.getElementById('selTag');
+  if(selected){ go.disabled = false; tag.textContent = '→ ' + selected; }
   else { go.disabled = true; tag.textContent = ''; }
 }
-function resetAll() {
+
+// ════════════ STATE LIST ════════════
+const US_STATES = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
+(function(){
+  const sel = document.getElementById('state');
+  US_STATES.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o); });
+})();
+
+function resetAll(){
   document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
-  selected = null;
-  shownList = [];
-  shownNames = new Set();
+  selected = null; shownList = []; shownNames = new Set();
   document.getElementById('custom').value = '';
   document.getElementById('state').value = 'All States';
   document.getElementById('go').disabled = true;
@@ -412,189 +467,104 @@ function resetAll() {
   document.getElementById('results').classList.remove('show');
   document.getElementById('grid').innerHTML = '';
   document.getElementById('moreWrap').style.display = 'none';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top:0, behavior:'smooth' });
 }
 
-// ── Populate US states dropdown ──
-const US_STATES = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
-(function(){
-  const sel = document.getElementById('state');
-  US_STATES.forEach(s => {
-    const o = document.createElement('option');
-    o.value = s; o.textContent = s;
-    sel.appendChild(o);
-  });
-})();
+// ════════════ CLOCK ════════════
+function tick(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour12:false}); }
+setInterval(tick,1000); tick();
 
-// ── Clock ──
-function tick() {
-  const d = new Date();
-  document.getElementById('clock').textContent = d.toLocaleTimeString('en-US', { hour12:false });
-}
-setInterval(tick, 1000); tick();
+// ════════════ SEARCH ════════════
+let shownList = [];
+let shownNames = new Set();
 
-// ── Running list state ──
-let shownList = [];        // all distributors currently on screen
-let shownNames = new Set(); // names already shown (for exclude)
+async function run(append){
+  if(!selected) return;
+  const status=document.getElementById('status'), statusTxt=document.getElementById('statusTxt'),
+        bar=document.getElementById('bar'), results=document.getElementById('results'),
+        grid=document.getElementById('grid'), go=document.getElementById('go'),
+        moreBtn=document.getElementById('moreBtn'), moreWrap=document.getElementById('moreWrap'),
+        stateVal=document.getElementById('state').value;
 
-// ── Run search ─────────────────────────────────────────
-// append=false → fresh search (replaces). append=true → "Find 10 more" (adds).
-async function run(append) {
-  if (!selected) return;
-  const status = document.getElementById('status');
-  const statusTxt = document.getElementById('statusTxt');
-  const bar = document.getElementById('bar');
-  const results = document.getElementById('results');
-  const grid = document.getElementById('grid');
-  const go = document.getElementById('go');
-  const moreBtn = document.getElementById('moreBtn');
-  const moreWrap = document.getElementById('moreWrap');
-  const stateVal = document.getElementById('state').value;
+  if(!append){ shownList=[]; shownNames=new Set(); grid.innerHTML=''; moreWrap.style.display='none'; results.classList.remove('show'); }
+  status.classList.add('show'); go.disabled=true; if(moreBtn) moreBtn.disabled=true;
 
-  if (!append) {
-    // fresh search → clear everything
-    shownList = [];
-    shownNames = new Set();
-    grid.innerHTML = '';
-    moreWrap.style.display = 'none';
-    results.classList.remove('show');
-  }
+  const locTxt = stateVal && stateVal!=='All States' ? ' in '+stateVal : ' nationwide';
+  const steps=[['Scanning the live web'+locTxt+'…',25],['Filtering for authentic distributors…',50],['Checking trade-account availability…',75],[append?'Finding fresh suppliers…':'Compiling verified matches…',92]];
+  let i=0; statusTxt.textContent=steps[0][0]; bar.style.width=steps[0][1]+'%';
+  const iv=setInterval(()=>{ i=(i+1)%steps.length; statusTxt.textContent=steps[i][0]; bar.style.width=steps[i][1]+'%'; },3200);
 
-  status.classList.add('show');
-  go.disabled = true;
-  if (moreBtn) moreBtn.disabled = true;
-
-  const locTxt = stateVal && stateVal !== 'All States' ? ' in ' + stateVal : ' nationwide';
-  const steps = [
-    ['Scanning the live web for suppliers' + locTxt + '…', 25],
-    ['Filtering for authentic US distributors…', 50],
-    ['Checking wholesale account availability…', 75],
-    [append ? 'Finding fresh distributors…' : 'Compiling verified matches…', 92],
-  ];
-  let i = 0;
-  statusTxt.textContent = steps[0][0]; bar.style.width = steps[0][1] + '%';
-  const iv = setInterval(() => {
-    i = (i + 1) % steps.length;
-    statusTxt.textContent = steps[i][0];
-    bar.style.width = steps[i][1] + '%';
-  }, 3200);
-
-  try {
-    const resp = await fetch('/api/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        category: selected,
-        state: stateVal,
-        exclude: Array.from(shownNames)
-      })
-    });
-    const data = await resp.json();
-    clearInterval(iv);
-    bar.style.width = '100%';
-
-    if (data.error) throw new Error(data.error);
-
-    setTimeout(() => {
-      status.classList.remove('show');
-      go.disabled = false;
-      if (moreBtn) moreBtn.disabled = false;
-      render(data, append);
-    }, 450);
-
-  } catch (err) {
-    clearInterval(iv);
-    status.classList.remove('show');
-    go.disabled = false;
-    if (moreBtn) moreBtn.disabled = false;
+  try{
+    const resp=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({category:selected,state:stateVal,exclude:Array.from(shownNames)})});
+    const data=await resp.json();
+    clearInterval(iv); bar.style.width='100%';
+    if(data.error) throw new Error(data.error);
+    setTimeout(()=>{ status.classList.remove('show'); go.disabled=false; if(moreBtn) moreBtn.disabled=false; render(data,append); },450);
+  }catch(err){
+    clearInterval(iv); status.classList.remove('show'); go.disabled=false; if(moreBtn) moreBtn.disabled=false;
     results.classList.add('show');
-    if (!append) {
-      grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v5 M12 16h.01"/></svg>
-        <div style="font-weight:600;color:var(--cream);margin-bottom:6px;">Search hit a snag</div>
-        <div style="font-size:13px;">${(err.message||'Please try again').replace(/</g,'')}. Check your API key & deployment, then retry.</div>
-      </div>`;
-      results.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      document.getElementById('moreHint').textContent = 'Could not load more — try again.';
-    }
+    if(!append){
+      grid.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v5 M12 16h.01"/></svg><div style="font-weight:600;color:var(--text);margin-bottom:6px;">Search hit a snag</div><div style="font-size:13px;">${(err.message||'Please try again').replace(/</g,'')}. Check your API key & deployment, then retry.</div></div>`;
+      results.scrollIntoView({behavior:'smooth'});
+    } else { document.getElementById('moreHint').textContent='Could not load more — try again.'; }
   }
 }
 
-function esc(s){ return String(s==null?'':s).replace(/[<>&"]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+function esc(s){ return String(s==null?'':s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
 
-function cardHTML(d, idx) {
-  const t = (d.type||'Wholesaler').toLowerCase();
-  const pcl = t.includes('distrib') ? 'dist' : t.includes('drop') ? 'drop' : 'whole';
-  const ws = d.wholesale_page && d.wholesale_page !== 'null' && d.wholesale_page !== null ? d.wholesale_page : null;
-  const site = d.website || '#';
-  const st = d.state && d.state !== 'null' ? d.state : 'USA';
+function cardHTML(d, idx){
+  const t=(d.type||'Wholesaler').toLowerCase();
+  const pcl=t.includes('distrib')?'dist':t.includes('drop')?'drop':'whole';
+  const ws=d.wholesale_page && d.wholesale_page!=='null' && d.wholesale_page!==null ? d.wholesale_page : null;
+  const site=d.website||'#';
+  const st=d.state && d.state!=='null' ? d.state : 'USA';
+  const num=String(idx+1).padStart(2,'0');
   return `<article class="card" style="animation-delay:${(idx%10)*0.06}s">
-    <div class="card-top">
-      <div class="card-name">${esc(d.name)}</div>
-      <span class="pill ${pcl}">${esc(d.type||'Wholesaler')}</span>
-    </div>
+    <div class="card-idx">${num}</div>
+    <div class="card-name">${esc(d.name)}</div>
+    <span class="pill ${pcl}">${esc(d.type||'Wholesaler')}</span>
     <p class="card-desc">${esc(d.description||'')}</p>
     <div class="meta">
-      <div class="meta-row"><i>◎</i> Based in: <b>${esc(st)}</b></div>
-      <div class="meta-row"><i>▦</i> Min order: <b>${esc(d.min_order||'Varies')}</b></div>
-      <div class="meta-row"><i>⊕</i> Intl shipping: <b class="${d.ships_international?'yes':'no'}">${d.ships_international?'Yes':'US only'}</b></div>
-      <div class="meta-row"><i>✦</i> Resale cert: <b class="${d.requires_resale_cert?'no':'yes'}">${d.requires_resale_cert?'Required':'Not required'}</b></div>
+      <div class="meta-row"><span class="mi">◎</span> Based in: <b>${esc(st)}</b></div>
+      <div class="meta-row"><span class="mi">▦</span> Min order: <b>${esc(d.min_order||'Varies')}</b></div>
+      <div class="meta-row"><span class="mi">⊕</span> Intl shipping: <b class="${d.ships_international?'yes':'no'}">${d.ships_international?'Yes':'US only'}</b></div>
+      <div class="meta-row"><span class="mi">✦</span> Resale cert: <b class="${d.requires_resale_cert?'no':'yes'}">${d.requires_resale_cert?'Required':'Not required'}</b></div>
     </div>
     <div class="card-links">
       <a class="lnk" href="${esc(site)}" target="_blank" rel="noopener">↗ Visit site</a>
-      ${ws ? `<a class="lnk acc" href="${esc(ws)}" target="_blank" rel="noopener">+ Open trade account</a>`
-           : `<a class="lnk acc" href="${esc(site)}" target="_blank" rel="noopener">+ Inquire wholesale</a>`}
+      ${ws?`<a class="lnk acc" href="${esc(ws)}" target="_blank" rel="noopener">+ Open trade account</a>`:`<a class="lnk acc" href="${esc(site)}" target="_blank" rel="noopener">+ Inquire wholesale</a>`}
     </div>
   </article>`;
 }
 
-function render(data, append) {
-  const results = document.getElementById('results');
-  const grid = document.getElementById('grid');
-  const count = document.getElementById('resCount');
-  const moreWrap = document.getElementById('moreWrap');
-  const moreHint = document.getElementById('moreHint');
+function render(data, append){
+  const results=document.getElementById('results'), grid=document.getElementById('grid'),
+        count=document.getElementById('resCount'), moreWrap=document.getElementById('moreWrap'),
+        moreHint=document.getElementById('moreHint');
   results.classList.add('show');
 
-  // new items, skipping any duplicate names already shown
-  const incoming = (data.distributors || [])
-    .filter(d => d && d.name)
-    .filter(d => !shownNames.has(d.name.toLowerCase()));
+  const incoming=(data.distributors||[]).filter(d=>d&&d.name).filter(d=>!shownNames.has(d.name.toLowerCase()));
 
-  if (!append && shownList.length === 0 && incoming.length === 0) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      No verified distributors found for this. Try a broader term or "All States".</div>`;
-    moreWrap.style.display = 'none';
-    results.scrollIntoView({ behavior: 'smooth' });
-    return;
+  if(!append && shownList.length===0 && incoming.length===0){
+    grid.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>No verified distributors found. Try a broader term or “All States”.</div>`;
+    moreWrap.style.display='none'; results.scrollIntoView({behavior:'smooth'}); return;
   }
 
-  // add to running list
-  incoming.forEach(d => { shownNames.add(d.name.toLowerCase()); shownList.push(d); });
+  incoming.forEach(d=>{ shownNames.add(d.name.toLowerCase()); shownList.push(d); });
 
-  const stateVal = document.getElementById('state').value;
-  const locLabel = stateVal && stateVal !== 'All States' ? ' · ' + stateVal : '';
-  count.textContent = shownList.length + ' distributor' + (shownList.length===1?'':'s') + ' · ' + (data.category || selected) + locLabel;
+  const stateVal=document.getElementById('state').value;
+  const locLabel=stateVal && stateVal!=='All States' ? ' · '+stateVal : '';
+  count.textContent=shownList.length+' distributor'+(shownList.length===1?'':'s')+' · '+(data.category||selected)+locLabel;
 
-  // render the full running list
-  grid.innerHTML = shownList.map((d, idx) => cardHTML(d, idx)).join('');
+  grid.innerHTML=shownList.map((d,idx)=>cardHTML(d,idx)).join('');
 
-  // show / update the "Find more" button
-  moreWrap.style.display = 'flex';
-  if (append && incoming.length === 0) {
-    moreHint.textContent = 'No new ones found — you may have reached the well-known suppliers. Try a state filter for more.';
-  } else {
-    moreHint.textContent = 'Showing ' + shownList.length + ' so far — click to dig deeper.';
-  }
+  moreWrap.style.display='flex';
+  if(append && incoming.length===0){ moreHint.textContent='No new ones found — try a different state to dig deeper.'; }
+  else { moreHint.textContent='Showing '+shownList.length+' so far — click to dig deeper.'; }
 
-  if (append) {
-    // scroll to the more button so user sees new cards appended
-    moreWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  } else {
-    results.scrollIntoView({ behavior: 'smooth' });
-  }
+  if(append) moreWrap.scrollIntoView({behavior:'smooth',block:'center'});
+  else results.scrollIntoView({behavior:'smooth'});
 }
 </script>
 </body>
