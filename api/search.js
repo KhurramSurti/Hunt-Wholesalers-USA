@@ -61,7 +61,7 @@ Rules:
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 2500,
         tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 6 }],
         messages: [{ role: 'user', content: prompt }]

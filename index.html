@@ -160,6 +160,23 @@
   .btn.ghost { background: transparent; }
   .sel-tag { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--acid-dim); }
 
+  /* ── State dropdown ── */
+  .state-row { display: flex; gap: 14px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+  .select-wrap { position: relative; min-width: 260px; }
+  .inp.select {
+    width: 100%; appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 42px;
+  }
+  .inp.select option { background: var(--ink-2); color: var(--cream); }
+  .select-chev { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--muted-2); pointer-events: none; }
+  .state-hint { font-size: 12.5px; color: var(--muted-2); }
+
+  /* ── Find more button ── */
+  .more-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 32px; }
+  .btn.more-btn { background: var(--ink-2); border: 1px dashed var(--line-2); color: var(--cream); padding: 15px 28px; }
+  .btn.more-btn:hover { border-color: var(--acid-dim); color: var(--acid); }
+  .btn.more-btn:disabled { opacity: .45; }
+  .more-hint { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--muted-2); }
+
   /* ── Status ── */
   .status { display: none; margin-top: 26px; padding: 18px 20px; background: var(--ink-2); border: 1px solid var(--line); border-radius: var(--r); }
   .status.show { display: block; animation: rise .5s forwards; }
@@ -273,8 +290,19 @@
         <button class="btn ghost" onclick="useCustom()"><i class="ti"></i>Use this</button>
       </div>
 
+      <div class="step-label" style="margin-top:28px;"><span class="step-num">2</span> Filter by US state <span style="text-transform:none;letter-spacing:0;color:var(--muted-2);">(optional)</span></div>
+      <div class="state-row">
+        <div class="select-wrap">
+          <select class="inp select" id="state">
+            <option value="All States">All States — nationwide</option>
+          </select>
+          <svg class="select-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <span class="state-hint">Pick a state to find suppliers based there, or leave on “All States”.</span>
+      </div>
+
       <div class="actions">
-        <button class="btn go" id="go" disabled onclick="run()">
+        <button class="btn go" id="go" disabled onclick="run(false)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
           Discover distributors
         </button>
@@ -300,6 +328,13 @@
       <span class="res-count" id="resCount"></span>
     </div>
     <div class="grid" id="grid"></div>
+    <div class="more-wrap" id="moreWrap" style="display:none;">
+      <button class="btn more-btn" id="moreBtn" onclick="run(true)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14 M5 12h14"/></svg>
+        Find 10 more (different ones)
+      </button>
+      <span class="more-hint" id="moreHint"></span>
+    </div>
   </section>
 
   <footer>
@@ -367,14 +402,29 @@ function refresh() {
 function resetAll() {
   document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
   selected = null;
+  shownList = [];
+  shownNames = new Set();
   document.getElementById('custom').value = '';
+  document.getElementById('state').value = 'All States';
   document.getElementById('go').disabled = true;
   document.getElementById('selTag').textContent = '';
   document.getElementById('status').classList.remove('show');
   document.getElementById('results').classList.remove('show');
   document.getElementById('grid').innerHTML = '';
+  document.getElementById('moreWrap').style.display = 'none';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// ── Populate US states dropdown ──
+const US_STATES = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
+(function(){
+  const sel = document.getElementById('state');
+  US_STATES.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s; o.textContent = s;
+    sel.appendChild(o);
+  });
+})();
 
 // ── Clock ──
 function tick() {
@@ -383,8 +433,13 @@ function tick() {
 }
 setInterval(tick, 1000); tick();
 
+// ── Running list state ──
+let shownList = [];        // all distributors currently on screen
+let shownNames = new Set(); // names already shown (for exclude)
+
 // ── Run search ─────────────────────────────────────────
-async function run() {
+// append=false → fresh search (replaces). append=true → "Find 10 more" (adds).
+async function run(append) {
   if (!selected) return;
   const status = document.getElementById('status');
   const statusTxt = document.getElementById('statusTxt');
@@ -392,19 +447,31 @@ async function run() {
   const results = document.getElementById('results');
   const grid = document.getElementById('grid');
   const go = document.getElementById('go');
+  const moreBtn = document.getElementById('moreBtn');
+  const moreWrap = document.getElementById('moreWrap');
+  const stateVal = document.getElementById('state').value;
+
+  if (!append) {
+    // fresh search → clear everything
+    shownList = [];
+    shownNames = new Set();
+    grid.innerHTML = '';
+    moreWrap.style.display = 'none';
+    results.classList.remove('show');
+  }
 
   status.classList.add('show');
-  results.classList.remove('show');
-  grid.innerHTML = '';
   go.disabled = true;
+  if (moreBtn) moreBtn.disabled = true;
 
+  const locTxt = stateVal && stateVal !== 'All States' ? ' in ' + stateVal : ' nationwide';
   const steps = [
-    ['Scanning the live web for suppliers…', 25],
+    ['Scanning the live web for suppliers' + locTxt + '…', 25],
     ['Filtering for authentic US distributors…', 50],
     ['Checking wholesale account availability…', 75],
-    ['Compiling verified matches…', 92],
+    [append ? 'Finding fresh distributors…' : 'Compiling verified matches…', 92],
   ];
-  let i = 0; bar.style.width = '8%';
+  let i = 0;
   statusTxt.textContent = steps[0][0]; bar.style.width = steps[0][1] + '%';
   const iv = setInterval(() => {
     i = (i + 1) % steps.length;
@@ -416,7 +483,11 @@ async function run() {
     const resp = await fetch('/api/search', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ category: selected })
+      body: JSON.stringify({
+        category: selected,
+        state: stateVal,
+        exclude: Array.from(shownNames)
+      })
     });
     const data = await resp.json();
     clearInterval(iv);
@@ -427,66 +498,103 @@ async function run() {
     setTimeout(() => {
       status.classList.remove('show');
       go.disabled = false;
-      render(data);
+      if (moreBtn) moreBtn.disabled = false;
+      render(data, append);
     }, 450);
 
   } catch (err) {
     clearInterval(iv);
     status.classList.remove('show');
     go.disabled = false;
+    if (moreBtn) moreBtn.disabled = false;
     results.classList.add('show');
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v5 M12 16h.01"/></svg>
-      <div style="font-weight:600;color:var(--cream);margin-bottom:6px;">Search hit a snag</div>
-      <div style="font-size:13px;">${(err.message||'Please try again').replace(/</g,'')}. Check your API key & deployment, then retry.</div>
-    </div>`;
-    results.scrollIntoView({ behavior: 'smooth' });
+    if (!append) {
+      grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v5 M12 16h.01"/></svg>
+        <div style="font-weight:600;color:var(--cream);margin-bottom:6px;">Search hit a snag</div>
+        <div style="font-size:13px;">${(err.message||'Please try again').replace(/</g,'')}. Check your API key & deployment, then retry.</div>
+      </div>`;
+      results.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      document.getElementById('moreHint').textContent = 'Could not load more — try again.';
+    }
   }
 }
 
 function esc(s){ return String(s==null?'':s).replace(/[<>&"]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
 
-function render(data) {
+function cardHTML(d, idx) {
+  const t = (d.type||'Wholesaler').toLowerCase();
+  const pcl = t.includes('distrib') ? 'dist' : t.includes('drop') ? 'drop' : 'whole';
+  const ws = d.wholesale_page && d.wholesale_page !== 'null' && d.wholesale_page !== null ? d.wholesale_page : null;
+  const site = d.website || '#';
+  const st = d.state && d.state !== 'null' ? d.state : 'USA';
+  return `<article class="card" style="animation-delay:${(idx%10)*0.06}s">
+    <div class="card-top">
+      <div class="card-name">${esc(d.name)}</div>
+      <span class="pill ${pcl}">${esc(d.type||'Wholesaler')}</span>
+    </div>
+    <p class="card-desc">${esc(d.description||'')}</p>
+    <div class="meta">
+      <div class="meta-row"><i>◎</i> Based in: <b>${esc(st)}</b></div>
+      <div class="meta-row"><i>▦</i> Min order: <b>${esc(d.min_order||'Varies')}</b></div>
+      <div class="meta-row"><i>⊕</i> Intl shipping: <b class="${d.ships_international?'yes':'no'}">${d.ships_international?'Yes':'US only'}</b></div>
+      <div class="meta-row"><i>✦</i> Resale cert: <b class="${d.requires_resale_cert?'no':'yes'}">${d.requires_resale_cert?'Required':'Not required'}</b></div>
+    </div>
+    <div class="card-links">
+      <a class="lnk" href="${esc(site)}" target="_blank" rel="noopener">↗ Visit site</a>
+      ${ws ? `<a class="lnk acc" href="${esc(ws)}" target="_blank" rel="noopener">+ Open trade account</a>`
+           : `<a class="lnk acc" href="${esc(site)}" target="_blank" rel="noopener">+ Inquire wholesale</a>`}
+    </div>
+  </article>`;
+}
+
+function render(data, append) {
   const results = document.getElementById('results');
   const grid = document.getElementById('grid');
   const count = document.getElementById('resCount');
+  const moreWrap = document.getElementById('moreWrap');
+  const moreHint = document.getElementById('moreHint');
   results.classList.add('show');
 
-  const list = (data.distributors || []).filter(d => d && d.name);
-  count.textContent = list.length + ' distributor' + (list.length===1?'':'s') + ' · ' + (data.category || selected);
+  // new items, skipping any duplicate names already shown
+  const incoming = (data.distributors || [])
+    .filter(d => d && d.name)
+    .filter(d => !shownNames.has(d.name.toLowerCase()));
 
-  if (!list.length) {
+  if (!append && shownList.length === 0 && incoming.length === 0) {
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-      No verified distributors found for this category. Try a broader term.</div>`;
-    results.scrollIntoView({ behavior: 'smooth' }); return;
+      No verified distributors found for this. Try a broader term or "All States".</div>`;
+    moreWrap.style.display = 'none';
+    results.scrollIntoView({ behavior: 'smooth' });
+    return;
   }
 
-  grid.innerHTML = list.map((d, idx) => {
-    const t = (d.type||'Wholesaler').toLowerCase();
-    const pcl = t.includes('distrib') ? 'dist' : t.includes('drop') ? 'drop' : 'whole';
-    const ws = d.wholesale_page && d.wholesale_page !== 'null' && d.wholesale_page !== null ? d.wholesale_page : null;
-    const site = d.website || '#';
-    return `<article class="card" style="animation-delay:${idx*0.06}s">
-      <div class="card-top">
-        <div class="card-name">${esc(d.name)}</div>
-        <span class="pill ${pcl}">${esc(d.type||'Wholesaler')}</span>
-      </div>
-      <p class="card-desc">${esc(d.description||'')}</p>
-      <div class="meta">
-        <div class="meta-row"><i>▦</i> Min order: <b>${esc(d.min_order||'Varies')}</b></div>
-        <div class="meta-row"><i>⊕</i> Intl shipping: <b class="${d.ships_international?'yes':'no'}">${d.ships_international?'Yes':'US only'}</b></div>
-        <div class="meta-row"><i>✦</i> Resale cert: <b class="${d.requires_resale_cert?'no':'yes'}">${d.requires_resale_cert?'Required':'Not required'}</b></div>
-      </div>
-      <div class="card-links">
-        <a class="lnk" href="${esc(site)}" target="_blank" rel="noopener">↗ Visit site</a>
-        ${ws ? `<a class="lnk acc" href="${esc(ws)}" target="_blank" rel="noopener">+ Open trade account</a>`
-             : `<a class="lnk acc" href="${esc(site)}" target="_blank" rel="noopener">+ Inquire wholesale</a>`}
-      </div>
-    </article>`;
-  }).join('');
+  // add to running list
+  incoming.forEach(d => { shownNames.add(d.name.toLowerCase()); shownList.push(d); });
 
-  results.scrollIntoView({ behavior: 'smooth' });
+  const stateVal = document.getElementById('state').value;
+  const locLabel = stateVal && stateVal !== 'All States' ? ' · ' + stateVal : '';
+  count.textContent = shownList.length + ' distributor' + (shownList.length===1?'':'s') + ' · ' + (data.category || selected) + locLabel;
+
+  // render the full running list
+  grid.innerHTML = shownList.map((d, idx) => cardHTML(d, idx)).join('');
+
+  // show / update the "Find more" button
+  moreWrap.style.display = 'flex';
+  if (append && incoming.length === 0) {
+    moreHint.textContent = 'No new ones found — you may have reached the well-known suppliers. Try a state filter for more.';
+  } else {
+    moreHint.textContent = 'Showing ' + shownList.length + ' so far — click to dig deeper.';
+  }
+
+  if (append) {
+    // scroll to the more button so user sees new cards appended
+    moreWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    results.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 </script>
 </body>
