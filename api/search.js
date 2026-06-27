@@ -1,6 +1,28 @@
 // Vercel Serverless Function
 // This function keeps your API key SECRET (it is never exposed to the browser).
 // The API key is read from Vercel's Environment Variables: ANTHROPIC_API_KEY
+//
+// ─── ABUSE / BUDGET PROTECTION ───────────────────────────────────────────────
+// These guards protect your Anthropic credit when the link is public.
+// They are "best effort" (in-memory, reset on cold starts). For a hard cap,
+// ALSO set a monthly spend limit in the Anthropic console — that is guaranteed.
+// Optional tuning via Vercel Environment Variables:
+//   MAX_PER_IP_HOUR   (default 10)  — searches allowed per visitor per hour
+//   MAX_PER_DAY       (default 200) — total searches allowed per day (budget cap)
+//   ACCESS_CODE       (optional)    — if set, requests must include this code
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CACHE = new Map();          // key -> { at, data }
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+const IP_HITS = new Map();        // ip  -> [timestamps]
+let DAY = { date: new Date().toDateString(), count: 0 };
+
+function num(envVal, def) { const n = parseInt(envVal, 10); return Number.isFinite(n) ? n : def; }
+function clientIp(req) {
+  const xf = req.headers['x-forwarded-for'];
+  if (typeof xf === 'string' && xf.length) return xf.split(',')[0].trim();
+  return req.headers['x-real-ip'] || 'unknown';
+}
 
 export default async function handler(req, res) {
   // Allow POST requests only
@@ -8,9 +30,49 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const accessCodeEnv = process.env.ACCESS_CODE;
+
+  // ── Lightweight: tell the frontend whether an access code is required ──
+  if (req.body && req.body.checkGate === true) {
+    return res.status(200).json({ gated: !!accessCodeEnv });
+  }
+
+  // ── Lightweight: verify an access code WITHOUT calling the AI (no cost) ──
+  if (req.body && req.body.verifyOnly === true) {
+    if (!accessCodeEnv) return res.status(200).json({ ok: true, gated: false });
+    const supplied = req.body.code || req.headers['x-access-code'];
+    if (supplied === accessCodeEnv) return res.status(200).json({ ok: true });
+    return res.status(401).json({ error: 'Incorrect access code.' });
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return res.status(500).json({ error: 'API key not configured. Set ANTHROPIC_API_KEY in Vercel.' });
+  }
+
+  // Access code gate (for private/team use). Public demo: leave ACCESS_CODE unset.
+  if (accessCodeEnv) {
+    const supplied = (req.body && req.body.code) || req.headers['x-access-code'];
+    if (supplied !== accessCodeEnv) {
+      return res.status(401).json({ error: 'Access code required or incorrect.' });
+    }
+  }
+
+  // ── Daily budget cap (protects your credit) ──
+  const today = new Date().toDateString();
+  if (DAY.date !== today) DAY = { date: today, count: 0 };
+  const maxPerDay = num(process.env.MAX_PER_DAY, 200);
+  if (DAY.count >= maxPerDay) {
+    return res.status(429).json({ error: "Daily search limit reached. Please try again tomorrow." });
+  }
+
+  // ── Per-IP rate limit (protects against spam) ──
+  const ip = clientIp(req);
+  const maxPerIpHour = num(process.env.MAX_PER_IP_HOUR, 10);
+  const nowTs = Date.now();
+  const recent = (IP_HITS.get(ip) || []).filter(t => nowTs - t < 60 * 60 * 1000);
+  if (recent.length >= maxPerIpHour) {
+    return res.status(429).json({ error: "You've run several searches in a short time. Please wait a little and try again." });
   }
 
   const { category, country, region, exclude, dropship } = req.body || {};
@@ -41,6 +103,17 @@ export default async function handler(req, res) {
     : [];
 
   const wantDropship = dropship === true;
+
+  // ── Cache lookup (only for fresh searches, not "Find 10 more") ──
+  const cacheKey = JSON.stringify([safeCategory, safeCountry, safeRegion, wantDropship]);
+  const isFreshSearch = excludeList.length === 0;
+  if (isFreshSearch) {
+    const hit = CACHE.get(cacheKey);
+    if (hit && (Date.now() - hit.at) < CACHE_TTL) {
+      // Served from cache — costs you nothing.
+      return res.status(200).json(hit.data);
+    }
+  }
 
   const locationLine = safeRegion
     ? `Find suppliers that are HEADQUARTERED, WAREHOUSED, or primarily based in ${safeRegion}, ${safeCountry}. Prefer suppliers physically located in ${safeRegion}.`
@@ -143,6 +216,16 @@ Rules:
       parsed = JSON.parse(match ? match[0] : clean);
     } catch (e) {
       return res.status(500).json({ error: 'Could not parse AI response. Please retry.' });
+    }
+
+    // Success → record usage against the rate-limit + budget counters
+    recent.push(nowTs); IP_HITS.set(ip, recent);
+    DAY.count += 1;
+
+    // Cache fresh searches so identical repeats cost nothing
+    if (isFreshSearch) {
+      CACHE.set(cacheKey, { at: Date.now(), data: parsed });
+      if (CACHE.size > 500) { const oldest = CACHE.keys().next().value; CACHE.delete(oldest); }
     }
 
     return res.status(200).json(parsed);
