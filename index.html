@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
 <style>
   /* ════════════ THEME WORLDS ════════════ */
   html[data-theme="obsidian"] {
@@ -104,6 +105,9 @@
   .brand-tag { font-family:var(--mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--faint); margin-top:1px; }
 
   .theme-switch { display:flex; align-items:center; gap:14px; }
+  .sound-btn { width:34px; height:34px; border-radius:9px; border:1px solid var(--line-2); background:var(--surface-2); color:var(--muted); cursor:pointer; display:grid; place-items:center; font-size:17px; transition:color .2s, border-color .2s, background .2s; }
+  .sound-btn:hover { color:var(--accent); border-color:var(--accent); }
+  .sound-btn.off { color:var(--faint); }
   .theme-label { font-family:var(--mono); font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--faint); }
   .swatches { display:flex; gap:8px; }
   .swatch {
@@ -172,10 +176,12 @@
     position:relative; text-align:left; cursor:pointer; background:var(--surface-2);
     border:1px solid var(--line); border-radius:var(--r); padding:17px 17px 15px; color:var(--text);
     transition:transform .2s cubic-bezier(.2,.8,.2,1), border-color .2s, background .2s;
+    animation:catin .55s cubic-bezier(.2,.8,.2,1) backwards;
   }
+  @keyframes catin { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
   .cat:hover { transform:translateY(-3px); border-color:var(--line-2); background:var(--elevated); }
-  .cat .ic { width:24px; height:24px; color:var(--muted); margin-bottom:13px; display:block; transition:color .2s; }
-  .cat:hover .ic { color:var(--accent); }
+  .cat .ic { font-size:24px; line-height:1; color:var(--muted); margin-bottom:13px; display:block; transition:color .2s, transform .25s cubic-bezier(.2,.8,.2,1); }
+  .cat:hover .ic { color:var(--accent); transform:scale(1.14) rotate(-4deg); }
   .cat .nm { font-weight:600; font-size:14.5px; display:block; }
   .cat .sb { font-size:12px; color:var(--faint); display:block; margin-top:2px; }
   .cat.on { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
@@ -194,6 +200,14 @@
   .inp::placeholder { color:var(--faint); }
 
   .state-row { display:flex; gap:16px; align-items:center; margin-top:15px; flex-wrap:wrap; }
+  .toggle-row { display:flex; gap:15px; align-items:flex-start; margin-top:15px; }
+  .switch { flex-shrink:0; width:50px; height:28px; border-radius:99px; border:1px solid var(--line-2); background:var(--surface-2); cursor:pointer; position:relative; padding:0; transition:background .25s, border-color .25s; }
+  .switch .knob { position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:var(--faint); transition:transform .25s cubic-bezier(.2,.8,.2,1), background .25s; }
+  .switch.on { background:var(--accent); border-color:var(--accent); }
+  .switch.on .knob { transform:translateX(22px); background:var(--accent-ink); }
+  .toggle-text { line-height:1.4; }
+  .toggle-title { font-size:14.5px; font-weight:600; color:var(--text); }
+  .toggle-sub { font-size:12.5px; color:var(--faint); max-width:52ch; margin-top:2px; }
   .select-wrap { position:relative; min-width:280px; }
   .inp.select { width:100%; appearance:none; -webkit-appearance:none; cursor:pointer; padding-right:44px; }
   .inp.select option { background:var(--surface); color:var(--text); }
@@ -247,6 +261,7 @@
   .pill.dist { background:color-mix(in srgb, var(--accent-2) 16%, transparent); color:var(--accent-2); }
   .pill.whole { background:color-mix(in srgb, var(--accent) 18%, transparent); color:color-mix(in srgb, var(--accent) 70%, var(--text)); }
   .pill.drop { background:color-mix(in srgb, var(--accent-3) 18%, transparent); color:var(--accent-3); }
+  .pill.ds { background:color-mix(in srgb, var(--accent-2) 18%, transparent); color:var(--accent-2); margin-left:6px; }
   .card-desc { font-size:13.5px; color:var(--muted); line-height:1.58; margin-bottom:17px; }
   .meta { display:flex; flex-direction:column; gap:9px; margin-bottom:17px; padding:15px; background:var(--surface-2); border-radius:12px; border:1px solid var(--line); }
   .meta-row { display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--muted); }
@@ -298,6 +313,7 @@
       </div>
     </div>
     <div class="theme-switch">
+      <button class="sound-btn" id="soundBtn" onclick="toggleSound()" aria-label="Toggle sound" title="Sound on/off"><i class="ti ti-volume"></i></button>
       <span class="theme-label">Theme</span>
       <div class="swatches" id="swatches">
         <button class="swatch" data-set="obsidian" title="Obsidian" onclick="setTheme('obsidian')"></button>
@@ -317,11 +333,11 @@
       <span class="l">authentic <em>wholesale</em></span>
       <span class="l">distributors.</span>
     </h1>
-    <p class="lede">Choose a category, filter by state, and let the AI map real US-based distributors and wholesalers — each with a direct link to open a trade account. No marketplaces, no middlemen, no guesswork.</p>
+    <p class="lede">Choose a category, pick a country and region, and let the AI map real distributors, wholesalers and suppliers — across the US, UK, Germany and Australia — each with a direct link to open a trade account. Filter for dropshipping/FBM partners too.</p>
     <div class="stats">
-      <div><div class="stat-n">50</div><div class="stat-l">States covered</div></div>
+      <div><div class="stat-n">4</div><div class="stat-l">Countries</div></div>
       <div><div class="stat-n">Live</div><div class="stat-l">Web-verified</div></div>
-      <div><div class="stat-n">Direct</div><div class="stat-l">Trade accounts</div></div>
+      <div><div class="stat-n">FBM</div><div class="stat-l">Dropship filter</div></div>
       <div><div class="stat-n">∞</div><div class="stat-l">Keep digging</div></div>
     </div>
   </section>
@@ -342,21 +358,32 @@
         <button class="btn ghost" onclick="useCustom()">Use this</button>
       </div>
 
-      <div class="step" style="margin-top:30px;"><b>2</b> Filter by US state <span class="opt">(optional)</span></div>
+      <div class="step" style="margin-top:30px;"><b>2</b> Country &amp; region <span class="opt">(region optional)</span></div>
       <div class="state-row">
         <div class="select-wrap">
-          <select class="inp select" id="state">
-            <option value="All States">All States — nationwide</option>
-          </select>
+          <select class="inp select" id="country"></select>
           <svg class="select-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
         </div>
-        <span class="state-hint">Pick a state to find suppliers based there, or leave on “All States”.</span>
+        <div class="select-wrap">
+          <select class="inp select" id="state"></select>
+          <svg class="select-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <span class="state-hint">Choose a country, then a region — or leave region nationwide.</span>
+      </div>
+
+      <div class="step" style="margin-top:30px;"><b>3</b> Fulfilment <span class="opt">(optional)</span></div>
+      <div class="toggle-row">
+        <button class="switch" id="dropSwitch" role="switch" aria-checked="false" onclick="toggleDrop()"><span class="knob"></span></button>
+        <div class="toggle-text">
+          <div class="toggle-title">Dropshipping / FBM suppliers only</div>
+          <div class="toggle-sub">Show only suppliers who list products and ship your orders for you (blind / white-label fulfilment).</div>
+        </div>
       </div>
 
       <div class="actions">
         <button class="btn go" id="go" disabled onclick="run(false)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          Discover distributors
+          Discover suppliers
         </button>
         <button class="btn ghost" onclick="resetAll()">Reset</button>
         <span class="sel-tag" id="selTag"></span>
@@ -393,40 +420,76 @@
 </div>
 
 <script>
+// ════════════ SOUND ════════════
+let actx = null, soundOn = true;
+try { soundOn = localStorage.getItem('ssa-sound') !== 'off'; } catch(e){}
+function audioCtx(){ if(!actx){ try { actx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} } return actx; }
+function blip(freq, dur, type, vol){
+  if(!soundOn) return; const a = audioCtx(); if(!a) return;
+  if(a.state === 'suspended') a.resume();
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = type||'triangle'; o.frequency.value = freq;
+  o.connect(g); g.connect(a.destination);
+  const t = a.currentTime;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol||0.05, t+0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001, t+(dur||0.05));
+  o.start(t); o.stop(t+(dur||0.05)+0.02);
+}
+function sClick(){ blip(660, 0.05, 'triangle', 0.045); }
+function sSelect(){ blip(880, 0.06, 'triangle', 0.05); }
+function sStart(){ blip(523.25, 0.08, 'sine', 0.05); setTimeout(()=>blip(659.25,0.08,'sine',0.045),70); }
+function sDone(){ if(!soundOn) return; [659.25, 830.61, 987.77, 1318.5].forEach((f,i)=> setTimeout(()=>blip(f, 0.22, 'sine', 0.06), i*95)); }
+function sError(){ blip(220, 0.18, 'sawtooth', 0.05); }
+function toggleSound(){
+  soundOn = !soundOn;
+  const btn = document.getElementById('soundBtn');
+  btn.classList.toggle('off', !soundOn);
+  btn.innerHTML = '<i class="ti ' + (soundOn ? 'ti-volume' : 'ti-volume-off') + '"></i>';
+  try { localStorage.setItem('ssa-sound', soundOn ? 'on' : 'off'); } catch(e){}
+  if(soundOn) sSelect();
+}
+(function(){
+  const btn = document.getElementById('soundBtn');
+  if(btn){ btn.classList.toggle('off', !soundOn); btn.innerHTML = '<i class="ti ' + (soundOn ? 'ti-volume' : 'ti-volume-off') + '"></i>'; }
+})();
+
 // ════════════ THEMES ════════════
 function setTheme(name){
   document.documentElement.setAttribute('data-theme', name);
   document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('on', s.dataset.set === name));
   try { localStorage.setItem('ssa-theme', name); } catch(e){}
+  sClick();
 }
 (function(){
   let saved = 'obsidian';
   try { saved = localStorage.getItem('ssa-theme') || 'obsidian'; } catch(e){}
-  setTheme(saved);
+  document.documentElement.setAttribute('data-theme', saved);
+  document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('on', s.dataset.set === saved));
 })();
 
 // ════════════ CATEGORIES ════════════
 const CATS = [
-  ['Electronics & Gadgets','Devices, accessories','M4 5h16v11H4z M9 20h6 M12 16v4'],
-  ['Fashion & Apparel','Clothing, textiles','M8 4l-4 3 2 3 2-1v8h8v-8l2 1 2-3-4-3-2 2-2-2z'],
-  ['Beauty & Skincare','Cosmetics, hair','M9 3h6l-1 4h-4z M8 7h8v12H8z'],
-  ['Home & Kitchen','Furniture, goods','M3 11 12 3l9 8 M5 10v10h14V10'],
-  ['Toys & Baby','Kids, infants','M12 8a4 4 0 100 8 4 4 0 000-8z M12 2v4 M12 18v4'],
-  ['Health & Supplements','Vitamins, fitness','M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z'],
-  ['Sports & Outdoor','Gear, equipment','M12 3a9 9 0 100 18 9 9 0 000-18z M3 12h18 M12 3a14 14 0 010 18'],
-  ['Pet Supplies','Food, accessories','M5 9a2 2 0 100-4 2 2 0 000 4z M19 9a2 2 0 100-4 2 2 0 000 4z M12 20c4 0 6-3 6-6s-2-4-6-4-6 1-6 4 2 6 6 6z'],
-  ['Automotive Parts','Parts, accessories','M5 13l2-5h10l2 5 M3 13h18v5H3z M7 18v2 M17 18v2'],
-  ['Office Supplies','Stationery, gear','M5 3h14v18H5z M9 7h6 M9 11h6 M9 15h4'],
-  ['Food & Grocery','Packaged goods','M6 8h12l-1 12H7z M9 8V5a3 3 0 016 0v3'],
-  ['Jewelry & Watches','Accessories','M6 3h12l3 5-9 13L3 8z M9 8h6'],
+  ['Electronics & Gadgets','Devices, accessories','ti-device-laptop'],
+  ['Fashion & Apparel','Clothing, textiles','ti-shirt'],
+  ['Beauty & Skincare','Cosmetics, hair','ti-spray'],
+  ['Home & Kitchen','Furniture, goods','ti-home-2'],
+  ['Toys & Baby','Kids, infants','ti-baby-carriage'],
+  ['Health & Supplements','Vitamins, fitness','ti-pill'],
+  ['Sports & Outdoor','Gear, equipment','ti-ball-football'],
+  ['Pet Supplies','Food, accessories','ti-paw'],
+  ['Automotive Parts','Parts, accessories','ti-car'],
+  ['Office Supplies','Stationery, gear','ti-briefcase'],
+  ['Food & Grocery','Packaged goods','ti-shopping-cart'],
+  ['Jewelry & Watches','Accessories','ti-diamond'],
 ];
 let selected = null;
 const catsEl = document.getElementById('cats');
-CATS.forEach(([name, sub, path]) => {
+CATS.forEach(([name, sub, icon], idx) => {
   const b = document.createElement('button');
-  b.className = 'cat'; b.dataset.cat = name;
+  b.className = 'cat'; b.dataset.cat = name; b.style.animationDelay = (idx*0.045)+'s';
   b.innerHTML = `
-    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>
+    <i class="ti ${icon} ic" aria-hidden="true"></i>
     <span class="nm">${name}</span><span class="sb">${sub}</span>
     <svg class="chk" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5 9-11"/></svg>`;
   b.onclick = () => selectCat(b, name);
@@ -435,12 +498,12 @@ CATS.forEach(([name, sub, path]) => {
 function selectCat(el, name){
   document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
   el.classList.add('on'); selected = name;
-  document.getElementById('custom').value = ''; refresh();
+  document.getElementById('custom').value = ''; refresh(); sSelect();
 }
 function useCustom(){
   const v = document.getElementById('custom').value.trim(); if(!v) return;
   document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
-  selected = v; refresh();
+  selected = v; refresh(); sSelect();
 }
 function refresh(){
   const go = document.getElementById('go'), tag = document.getElementById('selTag');
@@ -448,18 +511,54 @@ function refresh(){
   else { go.disabled = true; tag.textContent = ''; }
 }
 
-// ════════════ STATE LIST ════════════
-const US_STATES = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
+// ════════════ COUNTRIES & REGIONS ════════════
+const REGIONS = {
+  'United States': ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'],
+  'United Kingdom': ['London','South East England','South West England','East of England','West Midlands','East Midlands','North West England','North East England','Yorkshire & the Humber','Scotland','Wales','Northern Ireland'],
+  'Germany': ['Baden-Württemberg','Bavaria','Berlin','Brandenburg','Bremen','Hamburg','Hesse','Lower Saxony','Mecklenburg-Vorpommern','North Rhine-Westphalia','Rhineland-Palatinate','Saarland','Saxony','Saxony-Anhalt','Schleswig-Holstein','Thuringia'],
+  'Australia': ['New South Wales','Victoria','Queensland','Western Australia','South Australia','Tasmania','Australian Capital Territory','Northern Territory']
+};
+const COUNTRY_FLAGS = { 'United States':'🇺🇸', 'United Kingdom':'🇬🇧', 'Germany':'🇩🇪', 'Australia':'🇦🇺' };
+
 (function(){
-  const sel = document.getElementById('state');
-  US_STATES.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o); });
+  const csel = document.getElementById('country');
+  Object.keys(REGIONS).forEach(c => {
+    const o = document.createElement('option'); o.value = c; o.textContent = (COUNTRY_FLAGS[c]||'') + '  ' + c; csel.appendChild(o);
+  });
+  csel.value = 'United States';
+  csel.addEventListener('change', () => { populateRegions(csel.value); sClick(); });
+  populateRegions('United States');
 })();
+
+function populateRegions(country){
+  const sel = document.getElementById('state');
+  sel.innerHTML = '';
+  const all = document.createElement('option');
+  all.value = 'All'; all.textContent = 'All regions — nationwide';
+  sel.appendChild(all);
+  (REGIONS[country] || []).forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; sel.appendChild(o); });
+  sel.value = 'All';
+}
+
+// ════════════ DROPSHIP TOGGLE ════════════
+let dropOnly = false;
+function toggleDrop(){
+  dropOnly = !dropOnly;
+  const sw = document.getElementById('dropSwitch');
+  sw.classList.toggle('on', dropOnly);
+  sw.setAttribute('aria-checked', dropOnly ? 'true' : 'false');
+  sSelect();
+}
 
 function resetAll(){
   document.querySelectorAll('.cat').forEach(c => c.classList.remove('on'));
   selected = null; shownList = []; shownNames = new Set();
   document.getElementById('custom').value = '';
-  document.getElementById('state').value = 'All States';
+  document.getElementById('country').value = 'United States';
+  populateRegions('United States');
+  dropOnly = false;
+  document.getElementById('dropSwitch').classList.remove('on');
+  document.getElementById('dropSwitch').setAttribute('aria-checked','false');
   document.getElementById('go').disabled = true;
   document.getElementById('selTag').textContent = '';
   document.getElementById('status').classList.remove('show');
@@ -467,6 +566,7 @@ function resetAll(){
   document.getElementById('grid').innerHTML = '';
   document.getElementById('moreWrap').style.display = 'none';
   window.scrollTo({ top:0, behavior:'smooth' });
+  sClick();
 }
 
 // ════════════ CLOCK ════════════
@@ -483,26 +583,29 @@ async function run(append){
         bar=document.getElementById('bar'), results=document.getElementById('results'),
         grid=document.getElementById('grid'), go=document.getElementById('go'),
         moreBtn=document.getElementById('moreBtn'), moreWrap=document.getElementById('moreWrap'),
+        countryVal=document.getElementById('country').value,
         stateVal=document.getElementById('state').value;
 
   if(!append){ shownList=[]; shownNames=new Set(); grid.innerHTML=''; moreWrap.style.display='none'; results.classList.remove('show'); }
   status.classList.add('show'); go.disabled=true; if(moreBtn) moreBtn.disabled=true;
+  sStart();
 
-  const locTxt = stateVal && stateVal!=='All States' ? ' in '+stateVal : ' nationwide';
-  const steps=[['Scanning the live web'+locTxt+'…',25],['Filtering for authentic distributors…',50],['Checking trade-account availability…',75],[append?'Finding fresh suppliers…':'Compiling verified matches…',92]];
+  const regionTxt = stateVal && stateVal!=='All' ? stateVal+', '+countryVal : countryVal;
+  const dropTxt = dropOnly ? ' dropshipping/FBM' : '';
+  const steps=[['Scanning the live web in '+regionTxt+'…',25],['Filtering for authentic'+dropTxt+' suppliers…',50],['Ranking by reliability & track record…',75],[append?'Finding fresh suppliers…':'Compiling verified matches…',92]];
   let i=0; statusTxt.textContent=steps[0][0]; bar.style.width=steps[0][1]+'%';
   const iv=setInterval(()=>{ i=(i+1)%steps.length; statusTxt.textContent=steps[i][0]; bar.style.width=steps[i][1]+'%'; },3200);
 
   try{
     const resp=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({category:selected,state:stateVal,exclude:Array.from(shownNames)})});
+      body:JSON.stringify({category:selected,country:countryVal,region:stateVal,dropship:dropOnly,exclude:Array.from(shownNames)})});
     const data=await resp.json();
     clearInterval(iv); bar.style.width='100%';
     if(data.error) throw new Error(data.error);
     setTimeout(()=>{ status.classList.remove('show'); go.disabled=false; if(moreBtn) moreBtn.disabled=false; render(data,append); },450);
   }catch(err){
     clearInterval(iv); status.classList.remove('show'); go.disabled=false; if(moreBtn) moreBtn.disabled=false;
-    results.classList.add('show');
+    results.classList.add('show'); sError();
     if(!append){
       grid.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v5 M12 16h.01"/></svg><div style="font-weight:600;color:var(--text);margin-bottom:6px;">Search hit a snag</div><div style="font-size:13px;">${(err.message||'Please try again').replace(/</g,'')}. Check your API key & deployment, then retry.</div></div>`;
       results.scrollIntoView({behavior:'smooth'});
@@ -517,17 +620,21 @@ function cardHTML(d, idx){
   const pcl=t.includes('distrib')?'dist':t.includes('drop')?'drop':'whole';
   const ws=d.wholesale_page && d.wholesale_page!=='null' && d.wholesale_page!==null ? d.wholesale_page : null;
   const site=d.website||'#';
-  const st=d.state && d.state!=='null' ? d.state : 'USA';
+  const reg=d.region && d.region!=='null' ? d.region : (d.country||'—');
+  const ctry=d.country && d.country!=='null' ? d.country : (document.getElementById('country')?document.getElementById('country').value:'');
+  const based=ctry && reg && !reg.includes(ctry) ? esc(reg)+', '+esc(ctry) : esc(reg);
+  const ds=d.offers_dropshipping===true;
   const num=String(idx+1).padStart(2,'0');
   return `<article class="card" style="animation-delay:${(idx%10)*0.06}s">
     <div class="card-idx">${num}</div>
     <div class="card-name">${esc(d.name)}</div>
-    <span class="pill ${pcl}">${esc(d.type||'Wholesaler')}</span>
+    <span class="pill ${pcl}">${esc(d.type||'Wholesaler')}</span>${ds?`<span class="pill ds">Dropshipping / FBM</span>`:''}
     <p class="card-desc">${esc(d.description||'')}</p>
     <div class="meta">
-      <div class="meta-row"><span class="mi">◎</span> Based in: <b>${esc(st)}</b></div>
+      <div class="meta-row"><span class="mi">◎</span> Based in: <b>${based}</b></div>
       <div class="meta-row"><span class="mi">▦</span> Min order: <b>${esc(d.min_order||'Varies')}</b></div>
-      <div class="meta-row"><span class="mi">⊕</span> Intl shipping: <b class="${d.ships_international?'yes':'no'}">${d.ships_international?'Yes':'US only'}</b></div>
+      <div class="meta-row"><span class="mi">⊕</span> Intl shipping: <b class="${d.ships_international?'yes':'no'}">${d.ships_international?'Yes':'Domestic only'}</b></div>
+      <div class="meta-row"><span class="mi">⇄</span> Dropshipping: <b class="${ds?'yes':'no'}">${ds?'Yes — ships for you':'Not offered'}</b></div>
       <div class="meta-row"><span class="mi">✦</span> Resale cert: <b class="${d.requires_resale_cert?'no':'yes'}">${d.requires_resale_cert?'Required':'Not required'}</b></div>
     </div>
     <div class="card-links">
@@ -546,17 +653,19 @@ function render(data, append){
   const incoming=(data.distributors||[]).filter(d=>d&&d.name).filter(d=>!shownNames.has(d.name.toLowerCase()));
 
   if(!append && shownList.length===0 && incoming.length===0){
-    grid.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>No verified distributors found. Try a broader term or “All States”.</div>`;
+    grid.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>No verified suppliers found. Try a broader term, a different region, or turn off the dropshipping filter.</div>`;
     moreWrap.style.display='none'; results.scrollIntoView({behavior:'smooth'}); return;
   }
 
   incoming.forEach(d=>{ shownNames.add(d.name.toLowerCase()); shownList.push(d); });
 
+  const countryVal=document.getElementById('country').value;
   const stateVal=document.getElementById('state').value;
-  const locLabel=stateVal && stateVal!=='All States' ? ' · '+stateVal : '';
-  count.textContent=shownList.length+' distributor'+(shownList.length===1?'':'s')+' · '+(data.category||selected)+locLabel;
+  const locLabel=' · '+(stateVal && stateVal!=='All' ? stateVal+', '+countryVal : countryVal)+(dropOnly?' · Dropshipping':'');
+  count.textContent=shownList.length+' supplier'+(shownList.length===1?'':'s')+' · '+(data.category||selected)+locLabel;
 
   grid.innerHTML=shownList.map((d,idx)=>cardHTML(d,idx)).join('');
+  if(incoming.length>0) sDone();
 
   moreWrap.style.display='flex';
   if(append && incoming.length===0){ moreHint.textContent='No new ones found — try a different state to dig deeper.'; }
