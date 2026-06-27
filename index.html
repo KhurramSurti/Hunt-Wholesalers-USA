@@ -499,6 +499,12 @@
 </div>
 
 <script>
+// ════════════ DEMO MODE ════════════
+// Add ?demo=1 to the URL (or run localStorage.setItem('ssa-demo','1') once) to show
+// realistic sample results WITHOUT calling the AI — costs zero credit. Invisible to viewers.
+let DEMO = false;
+try { DEMO = (new URLSearchParams(location.search).get('demo') === '1') || localStorage.getItem('ssa-demo') === '1'; } catch(e){}
+
 // ════════════ SOUND ════════════
 let actx = null, soundOn = true;
 try { soundOn = localStorage.getItem('ssa-sound') !== 'off'; } catch(e){}
@@ -660,6 +666,7 @@ async function verifyCode(code){
   catch(e){ return false; }
 }
 async function initGate(){
+  if(DEMO) return; // demo mode: no network, no gate
   try {
     const r=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({checkGate:true})});
     const d=await r.json();
@@ -738,6 +745,57 @@ function copyShortlist(){
 document.addEventListener('keydown',e=>{ if(e.key==='Escape' && document.getElementById('shortlistModal').style.display==='flex') closeShortlist(); });
 updateSavedCount();
 
+// ════════════ DEMO DATA (used only when DEMO is on) ════════════
+function hashStr(s){ let x=0; for(let i=0;i<s.length;i++){ x=(x*31 + s.charCodeAt(i))>>>0; } return x; }
+const DEMO_POOL = {
+  'Electronics & Gadgets': { items:[['Crestline Electronics Supply','Distributor'],['Vantage Tech Distributors','Distributor'],['Northgate Wholesale Electronics','Wholesaler'],['Pinnacle Gadget Supply','Supplier'],['BlueHarbor Electronics','Distributor'],['Summit Digital Wholesale','Wholesaler'],['IronPeak Devices','Supplier'],['Meridian Tech Trading','Distributor'],['CoreLine Accessories Co','Wholesaler'],['Atlas Electronics Direct','Distributor'],['Brightway Gadgets','Dropshipper'],['Evergreen Tech Supply','Supplier']], descs:['Bulk consumer electronics, chargers and phone accessories for retailers and resellers.','Trade supplier of gadgets, audio and mobile accessories for shops and online sellers.','Wholesale electronics and accessories with tiered trade pricing for resellers.','Imports and distributes consumer tech to independent retailers and e-commerce stores.'] },
+  'Fashion & Apparel': { items:[['Loomfield Apparel Wholesale','Wholesaler'],['Westbrook Clothing Co','Distributor'],['Stitchline Garment Supply','Supplier'],['Harbor & Field Apparel','Wholesaler'],['Crestwood Textiles','Distributor'],['Maple Row Clothing','Wholesaler'],['Northgate Garment Trade','Supplier'],['Vantage Fashion Group','Distributor'],['Cedar & Co Apparel','Wholesaler'],['Brightline Clothing Supply','Dropshipper'],['Summit Apparel Direct','Distributor'],['Ivory Lane Textiles','Supplier']], descs:['Wholesale clothing and blanks for boutiques, print shops and online stores.','Trade apparel supplier offering bulk garments and private-label options.','Distributes fashion basics and seasonal lines to independent retailers.','Bulk apparel and textiles with low minimums for growing resellers.'] },
+  'Beauty & Skincare': { items:[['Lumora Beauty Supply','Distributor'],['Verdant Skincare Wholesale','Wholesaler'],['GlowHarbor Cosmetics','Supplier'],['Petal & Pure Distributors','Distributor'],['Aurelia Beauty Trade','Wholesaler'],['Northshore Cosmetics','Supplier'],['Vantage Beauty Group','Distributor'],['Clearbrook Skincare Co','Wholesaler'],['Bloomline Beauty Supply','Dropshipper'],['Summit Cosmetics Direct','Distributor'],['Ivory Rose Beauty','Supplier'],['EverGlow Wholesale','Wholesaler']], descs:['Wholesale cosmetics, skincare and haircare for salons and online retailers.','Trade supplier of beauty products with private-label and bulk options.','Distributes clean beauty and skincare lines to boutiques and resellers.','Bulk beauty supply with tiered pricing for spas, salons and stores.'] },
+  'Home & Kitchen': { items:[['Hearthstone Home Supply','Distributor'],['Maple Row Kitchenware','Wholesaler'],['Northgate Home Goods','Supplier'],['Vantage Living Distributors','Distributor'],['Cedarline Housewares','Wholesaler'],['Brightway Home Trade','Supplier'],['Summit Kitchen Supply','Distributor'],['Harbor & Field Home','Wholesaler'],['Crestwood Homeware','Dropshipper'],['Atlas Home Direct','Distributor'],['Ivory Lane Living','Supplier'],['Evergreen Housewares','Wholesaler']], descs:['Wholesale home and kitchen goods for retailers, gift shops and online stores.','Trade supplier of housewares, cookware and décor with bulk pricing.','Distributes home and kitchen lines to boutiques and independent retailers.','Bulk homeware and kitchen essentials with low minimums for resellers.'] },
+  'Toys & Baby': { items:[['Little Acorn Wholesale','Distributor'],['Maple Row Toys','Wholesaler'],['Northgate Baby Supply','Supplier'],['Vantage Kids Distributors','Distributor'],['Brightway Toy Trade','Wholesaler'],['Cedar & Co Baby Goods','Supplier'],['Summit Toy Supply','Distributor'],['Harbor Play Wholesale','Wholesaler'],['Tinyland Distributors','Dropshipper'],['Atlas Kids Direct','Distributor'],['Ivory Lane Baby','Supplier'],['Evergreen Toys','Wholesaler']], descs:['Wholesale toys and baby products for gift shops, retailers and online sellers.','Trade supplier of safe, certified toys and infant goods in bulk.','Distributes toys and baby essentials to boutiques and independent stores.','Bulk toys and baby supplies with low minimums for growing resellers.'] },
+  'Health & Supplements': { items:[['Vitalis Supplement Supply','Distributor'],['Northshore Nutrition','Wholesaler'],['Verdant Health Trade','Supplier'],['Vantage Wellness Distributors','Distributor'],['Brightway Nutrition','Wholesaler'],['Cedarline Supplements','Supplier'],['Summit Health Supply','Distributor'],['Harbor Wellness Wholesale','Wholesaler'],['PureForm Distributors','Dropshipper'],['Atlas Nutrition Direct','Distributor'],['Ivory Peak Wellness','Supplier'],['Evergreen Supplements','Wholesaler']], descs:['Wholesale vitamins and supplements for health stores and online retailers.','Trade supplier of nutrition and wellness products with private-label options.','Distributes supplements and fitness nutrition to resellers and gyms.','Bulk supplement supply with compliant labelling for retailers.'] },
+  'Sports & Outdoor': { items:[['Summit Outdoor Supply','Distributor'],['Northgate Sporting Goods','Wholesaler'],['TrailHead Distributors','Supplier'],['Vantage Sports Group','Distributor'],['Brightway Outdoor Trade','Wholesaler'],['Cedarline Athletics','Supplier'],['Harbor Field Sports','Distributor'],['Crestwood Outdoor Co','Wholesaler'],['PeakLine Gear','Dropshipper'],['Atlas Sports Direct','Distributor'],['Ivory Ridge Outdoors','Supplier'],['Evergreen Athletics','Wholesaler']], descs:['Wholesale sports and outdoor gear for retailers and online stores.','Trade supplier of fitness, camping and outdoor equipment in bulk.','Distributes athletic and outdoor lines to independent retailers.','Bulk sporting goods and gear with trade pricing for resellers.'] },
+  'Pet Supplies': { items:[['Companion Pet Wholesale','Distributor'],['Northgate Pet Supply','Wholesaler'],['Maple Row Pet Goods','Supplier'],['Vantage Pet Distributors','Distributor'],['Brightway Pet Trade','Wholesaler'],['Cedar & Co Pet Supply','Supplier'],['Summit Pet Direct','Distributor'],['Harbor Paws Wholesale','Wholesaler'],['Pawline Distributors','Dropshipper'],['Atlas Pet Supply','Distributor'],['Ivory Lane Pets','Supplier'],['Evergreen Pet Goods','Wholesaler']], descs:['Wholesale pet food, toys and accessories for stores and online sellers.','Trade supplier of pet supplies with bulk and private-label options.','Distributes pet care lines to boutiques and independent retailers.','Bulk pet supplies with low minimums for growing resellers.'] },
+  'Automotive Parts': { items:[['Drivetrain Parts Supply','Distributor'],['Northgate Auto Wholesale','Wholesaler'],['Vantage Automotive Group','Distributor'],['IronPeak Auto Parts','Supplier'],['Brightway Auto Trade','Wholesaler'],['Cedarline Motors Supply','Supplier'],['Summit Auto Direct','Distributor'],['Harbor Motor Wholesale','Wholesaler'],['Axleline Distributors','Dropshipper'],['Atlas Auto Parts','Distributor'],['Ivory Ridge Automotive','Supplier'],['Evergreen Auto Supply','Wholesaler']], descs:['Wholesale automotive parts and accessories for shops and resellers.','Trade supplier of car parts, tools and accessories in bulk.','Distributes aftermarket auto parts to garages and online stores.','Bulk automotive supply with trade pricing for retailers.'] },
+  'Office Supplies': { items:[['Penfield Office Supply','Distributor'],['Northgate Stationery','Wholesaler'],['Vantage Office Group','Distributor'],['Brightway Office Trade','Wholesaler'],['Cedarline Supplies Co','Supplier'],['Summit Office Direct','Distributor'],['Harbor Desk Wholesale','Wholesaler'],['Clearbrook Stationery','Supplier'],['Inkline Distributors','Dropshipper'],['Atlas Office Supply','Distributor'],['Ivory Lane Office','Supplier'],['Evergreen Stationery','Wholesaler']], descs:['Wholesale office and stationery supplies for retailers and businesses.','Trade supplier of office essentials and school supplies in bulk.','Distributes stationery and office products to resellers and stores.','Bulk office supply with tiered pricing for growing retailers.'] },
+  'Food & Grocery': { items:[['Harvest Lane Foods','Distributor'],['Northgate Grocery Wholesale','Wholesaler'],['Vantage Food Group','Distributor'],['Brightway Foods Trade','Wholesaler'],['Cedarline Pantry Supply','Supplier'],['Summit Grocery Direct','Distributor'],['Harbor Provisions','Wholesaler'],['Maple Row Foods','Supplier'],['Pantryline Distributors','Dropshipper'],['Atlas Food Supply','Distributor'],['Ivory Lane Provisions','Supplier'],['Evergreen Grocery','Wholesaler']], descs:['Wholesale packaged foods and pantry goods for shops and online stores.','Trade supplier of grocery and specialty food products in bulk.','Distributes packaged food and beverages to independent retailers.','Bulk grocery supply with trade pricing for resellers.'] },
+  'Jewelry & Watches': { items:[['Aurelia Jewelry Supply','Distributor'],['Northgate Jewelry Wholesale','Wholesaler'],['Vantage Accessories Group','Distributor'],['Brightway Jewelry Trade','Wholesaler'],['Cedarline Adornments','Supplier'],['Summit Jewelry Direct','Distributor'],['Harbor Gold Wholesale','Wholesaler'],['Ivory Rose Jewelry','Supplier'],['Gemline Distributors','Dropshipper'],['Atlas Jewelry Supply','Distributor'],['Crestwood Timepieces','Supplier'],['Evergreen Accessories','Wholesaler']], descs:['Wholesale fashion jewelry and watches for boutiques and online sellers.','Trade supplier of jewelry and accessories with bulk pricing.','Distributes fashion jewelry and timepieces to independent retailers.','Bulk jewelry supply with low minimums for growing resellers.'] }
+};
+function genericDemoPool(cat){
+  const base=(cat||'Products').replace(/[^a-zA-Z0-9 ]/g,'').trim()||'Products';
+  const pats=['{} Distributors','{} Wholesale Co','{} Supply Group','Vantage {}','Crestline {} Supply','Northgate {} Trade','{} Direct','Summit {} Supply','Harbor {} Wholesale','Evergreen {} Co'];
+  const types=['Distributor','Wholesaler','Supplier','Distributor','Wholesaler','Supplier','Distributor','Wholesaler','Dropshipper','Distributor'];
+  return { items:pats.map((p,i)=>[p.replace('{}',base), types[i%types.length]]),
+           descs:['Wholesale '+base.toLowerCase()+' for retailers and online sellers.','Trade supplier of '+base.toLowerCase()+' with bulk and reseller pricing.','Distributes '+base.toLowerCase()+' to independent retailers and stores.','Bulk '+base.toLowerCase()+' supply with low minimums for resellers.'] };
+}
+function buildDemo(cat, country, region, dropOnly){
+  const cur={'United States':'$','United Kingdom':'£','Germany':'€','Australia':'A$'}[country]||'$';
+  const pool=DEMO_POOL[cat]||genericDemoPool(cat);
+  const regions=(REGIONS[country]||['USA']);
+  const mins=['No minimum', cur+'100', cur+'250', cur+'500', 'Varies', cur+'1,000', cur+'2,500'];
+  const out=[];
+  for(const it of pool.items){
+    const name=it[0];
+    if(shownNames.has(name.toLowerCase())) continue;
+    const hh=hashStr(name);
+    const reg=(region && region!=='All') ? region : regions[hh % regions.length];
+    const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'');
+    const hasWP=(hh%3!==0);
+    out.push({
+      name, type:it[1], country, region:reg,
+      website:'https://www.'+slug+'.com',
+      wholesale_page: hasWP ? 'https://www.'+slug+'.com/wholesale' : null,
+      description: pool.descs[hh % pool.descs.length],
+      min_order: mins[hh % mins.length],
+      ships_international: ((hh>>3)%10)<6,
+      requires_resale_cert: country==='United States' ? (((hh>>5)%10)<6) : (((hh>>5)%10)<3),
+      offers_dropshipping: dropOnly ? true : (((hh>>7)%10)<5)
+    });
+    if(out.length>=10) break;
+  }
+  return { category:cat, country, region:region||'All', distributors:out };
+}
+
 // ════════════ SEARCH ════════════
 let shownList = [];
 let shownNames = new Set();
@@ -760,6 +818,16 @@ async function run(append){
   const steps=[['Scanning the live web in '+regionTxt+'…',25],['Filtering for authentic'+dropTxt+' suppliers…',50],['Ranking by reliability & track record…',75],[append?'Finding fresh suppliers…':'Compiling verified matches…',92]];
   let i=0; statusTxt.textContent=steps[0][0]; bar.style.width=steps[0][1]+'%';
   const iv=setInterval(()=>{ i=(i+1)%steps.length; statusTxt.textContent=steps[i][0]; bar.style.width=steps[i][1]+'%'; },3200);
+
+  // ── DEMO MODE: realistic results, no API call, zero cost ──
+  if(DEMO){
+    const demoData = buildDemo(selected, countryVal, stateVal, dropOnly);
+    setTimeout(()=>{
+      clearInterval(iv); bar.style.width='100%';
+      setTimeout(()=>{ status.classList.remove('show'); go.disabled=false; if(moreBtn) moreBtn.disabled=false; render(demoData, append); }, 500);
+    }, 2400 + Math.random()*1200);
+    return;
+  }
 
   try{
     const resp=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},
