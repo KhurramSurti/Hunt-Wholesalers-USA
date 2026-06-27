@@ -287,8 +287,51 @@
   .empty { text-align:center; padding:56px 20px; color:var(--muted); grid-column:1/-1; }
   .empty svg { width:38px; height:38px; color:var(--faint); margin-bottom:14px; }
 
-  footer { border-top:1px solid var(--line); margin-top:60px; padding:28px 0 56px; text-align:center; }
-  footer p { font-family:var(--mono); font-size:11.5px; color:var(--faint); line-height:1.8; }
+  /* ── Access gate ── */
+  .gate { position:fixed; inset:0; z-index:1000; background:var(--bg); display:none; align-items:center; justify-content:center; padding:24px; }
+  .gate-card { width:100%; max-width:380px; text-align:center; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl); padding:38px 30px; box-shadow:var(--shadow); }
+  .gate-mark { width:46px; height:48px; margin:0 auto 18px; }
+  .gate-title { font-family:var(--display); font-weight:600; font-size:23px; letter-spacing:-0.01em; }
+  .gate-sub { font-size:13.5px; color:var(--muted); margin:8px 0 22px; line-height:1.5; }
+  .gate-input { width:100%; text-align:center; letter-spacing:0.15em; margin-bottom:12px; }
+  .gate-btn { width:100%; justify-content:center; }
+  .gate-err { font-size:12.5px; color:var(--accent-3); margin-top:12px; min-height:16px; }
+
+  /* ── Saved button (topbar) ── */
+  .saved-btn { display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 12px; border-radius:9px; border:1px solid var(--line-2); background:var(--surface-2); color:var(--muted); cursor:pointer; font-family:var(--mono); font-size:12px; transition:color .2s, border-color .2s; }
+  .saved-btn:hover { color:var(--accent); border-color:var(--accent); }
+  .saved-btn.has { color:var(--accent); border-color:var(--accent); }
+  .saved-btn i { font-size:16px; }
+
+  /* ── Save button (on cards) ── */
+  .save-btn { position:absolute; top:18px; right:46px; width:30px; height:30px; border-radius:8px; border:1px solid var(--line); background:var(--surface-2); color:var(--muted); cursor:pointer; display:grid; place-items:center; font-size:16px; transition:color .18s, border-color .18s, transform .18s; }
+  .save-btn:hover { color:var(--accent); border-color:var(--accent); transform:translateY(-1px); }
+  .save-btn.on { color:var(--accent); border-color:var(--accent); }
+
+  /* ── Modal / shortlist ── */
+  .modal { position:fixed; inset:0; z-index:900; display:none; align-items:center; justify-content:center; padding:24px; }
+  .modal-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(3px); }
+  .modal-card { position:relative; width:100%; max-width:560px; max-height:84vh; display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-xl); box-shadow:var(--shadow); overflow:hidden; animation:rise .4s; }
+  .modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:22px 24px 14px; }
+  .modal-title { font-family:var(--display); font-weight:600; font-size:22px; letter-spacing:-0.01em; }
+  .modal-sub { font-size:12.5px; color:var(--muted); margin-top:3px; }
+  .icon-btn { width:32px; height:32px; border-radius:8px; border:1px solid var(--line-2); background:var(--surface-2); color:var(--muted); cursor:pointer; display:grid; place-items:center; font-size:16px; flex-shrink:0; transition:color .18s, border-color .18s; }
+  .icon-btn:hover { color:var(--text); border-color:var(--line-2); }
+  .modal-actions { display:flex; gap:9px; padding:0 24px 16px; flex-wrap:wrap; border-bottom:1px solid var(--line); }
+  .modal-actions .btn { padding:10px 16px; font-size:13px; }
+  .btn.danger:hover { color:var(--accent-3); border-color:var(--accent-3); }
+  .modal-body { overflow-y:auto; padding:16px 24px 24px; }
+  .sl-item { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:14px 0; border-bottom:1px solid var(--line); }
+  .sl-item:last-child { border-bottom:none; }
+  .sl-name { font-family:var(--display); font-weight:600; font-size:16px; }
+  .sl-meta { font-family:var(--mono); font-size:11px; color:var(--faint); margin-top:3px; }
+  .sl-links { display:flex; gap:12px; margin-top:7px; }
+  .sl-links a { font-size:12.5px; color:var(--accent-2); text-decoration:none; }
+  .sl-links a:hover { text-decoration:underline; }
+  .sl-empty { text-align:center; color:var(--muted); padding:40px 10px; display:flex; flex-direction:column; align-items:center; gap:12px; font-size:13.5px; }
+  .sl-empty i { color:var(--faint); }
+
+  footer { border-top:1px solid var(--line); margin-top:60px; padding:28px 0 56px; text-align:center; }  footer p { font-family:var(--mono); font-size:11.5px; color:var(--faint); line-height:1.8; }
   footer a { color:var(--accent-2); text-decoration:none; cursor:pointer; }
 
   @media (max-width:640px){
@@ -301,6 +344,19 @@
 </style>
 </head>
 <body>
+
+<!-- ACCESS GATE (shown only if ACCESS_CODE is set in Vercel) -->
+<div class="gate" id="gate" style="display:none;">
+  <div class="gate-card">
+    <div class="brand-mark gate-mark" role="img" aria-label="Khurram Surti logo"></div>
+    <div class="gate-title">Surti Sourcing Atlas</div>
+    <div class="gate-sub">This workspace is private. Enter your team access code to continue.</div>
+    <input class="inp gate-input" id="gateInput" type="password" placeholder="Access code" autocomplete="off" />
+    <button class="btn go gate-btn" id="gateBtn" onclick="submitGate()">Unlock</button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
+
 <div class="wrap">
 
   <!-- TOP BAR -->
@@ -309,10 +365,13 @@
       <div class="brand-mark" role="img" aria-label="Khurram Surti logo"></div>
       <div class="brand-text">
         <div class="brand-name"><b>Surti</b> <span>Sourcing Atlas</span></div>
-        <div class="brand-tag">Verified US Supply Network</div>
+        <div class="brand-tag">Verified Supplier Network</div>
       </div>
     </div>
     <div class="theme-switch">
+      <button class="saved-btn" id="savedBtn" onclick="openShortlist()" title="Your shortlist">
+        <i class="ti ti-bookmark"></i><span id="savedCount">0</span>
+      </button>
       <button class="sound-btn" id="soundBtn" onclick="toggleSound()" aria-label="Toggle sound" title="Sound on/off"><i class="ti ti-volume"></i></button>
       <span class="theme-label">Theme</span>
       <div class="swatches" id="swatches">
@@ -417,6 +476,26 @@
     <p>Surti Sourcing Atlas · Built with the Claude API · Results are AI-generated from live web search — always verify terms before ordering · <a onclick="resetAll()">New search</a></p>
   </footer>
 
+</div>
+
+<!-- SHORTLIST MODAL -->
+<div class="modal" id="shortlistModal" style="display:none;">
+  <div class="modal-backdrop" onclick="closeShortlist()"></div>
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">Your shortlist</div>
+        <div class="modal-sub" id="shortlistSub">Saved suppliers are stored on this device.</div>
+      </div>
+      <button class="icon-btn" onclick="closeShortlist()" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-actions" id="shortlistActions">
+      <button class="btn go" onclick="exportCSV()"><i class="ti ti-download"></i> Export CSV</button>
+      <button class="btn ghost" onclick="copyShortlist()"><i class="ti ti-copy"></i> Copy list</button>
+      <button class="btn ghost danger" onclick="clearShortlist()"><i class="ti ti-trash"></i> Clear all</button>
+    </div>
+    <div class="modal-body" id="shortlistBody"></div>
+  </div>
 </div>
 
 <script>
@@ -573,6 +652,92 @@ function resetAll(){
 function tick(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour12:false}); }
 setInterval(tick,1000); tick();
 
+// ════════════ ACCESS GATE ════════════
+let ACCESS_CODE = '';
+try { ACCESS_CODE = localStorage.getItem('ssa-code') || ''; } catch(e){}
+async function verifyCode(code){
+  try { const r=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({verifyOnly:true,code})}); return r.ok; }
+  catch(e){ return false; }
+}
+async function initGate(){
+  try {
+    const r=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({checkGate:true})});
+    const d=await r.json();
+    if(d && d.gated){
+      if(ACCESS_CODE && await verifyCode(ACCESS_CODE)) return; // already unlocked on this device
+      const g=document.getElementById('gate'); g.style.display='flex';
+      const inp=document.getElementById('gateInput'); inp.focus();
+    }
+  } catch(e){ /* if the check fails, don't lock the user out */ }
+}
+async function submitGate(){
+  const inp=document.getElementById('gateInput'), err=document.getElementById('gateErr');
+  const code=inp.value.trim(); if(!code) return;
+  err.textContent='';
+  const ok=await verifyCode(code);
+  if(ok){ ACCESS_CODE=code; try{localStorage.setItem('ssa-code',code);}catch(e){} document.getElementById('gate').style.display='none'; sSelect(); }
+  else { err.textContent='Incorrect code. Please try again.'; inp.value=''; inp.focus(); }
+}
+(function(){ const i=document.getElementById('gateInput'); if(i) i.addEventListener('keydown',e=>{ if(e.key==='Enter') submitGate(); }); })();
+initGate();
+
+// ════════════ SHORTLIST ════════════
+let SAVED = [];
+try { SAVED = JSON.parse(localStorage.getItem('ssa-saved')||'[]'); if(!Array.isArray(SAVED)) SAVED=[]; } catch(e){ SAVED=[]; }
+function savedId(d){ return ((d&&d.name)||'').toLowerCase().trim()+'|'+((d&&d.website)||'').toLowerCase().trim(); }
+function persistSaved(){ try{ localStorage.setItem('ssa-saved', JSON.stringify(SAVED)); }catch(e){} updateSavedCount(); }
+function updateSavedCount(){ const el=document.getElementById('savedCount'); if(el) el.textContent=SAVED.length; const b=document.getElementById('savedBtn'); if(b) b.classList.toggle('has', SAVED.length>0); }
+function refreshGrid(){ if(typeof shownList!=='undefined' && shownList && shownList.length){ document.getElementById('grid').innerHTML=shownList.map((x,ix)=>cardHTML(x,ix)).join(''); } }
+function toggleSaveByIndex(idx){ const d=shownList[idx]; if(!d) return; toggleSaveObj(d); }
+function toggleSaveObj(d){
+  const id=savedId(d); const i=SAVED.findIndex(s=>savedId(s)===id);
+  if(i>=0){ SAVED.splice(i,1); sClick(); } else { SAVED.push(d); sSelect(); }
+  persistSaved(); refreshGrid();
+  if(document.getElementById('shortlistModal').style.display==='flex') renderShortlist();
+}
+function openShortlist(){ renderShortlist(); document.getElementById('shortlistModal').style.display='flex'; sSelect(); }
+function closeShortlist(){ document.getElementById('shortlistModal').style.display='none'; sClick(); }
+function renderShortlist(){
+  const body=document.getElementById('shortlistBody'), sub=document.getElementById('shortlistSub'), actions=document.getElementById('shortlistActions');
+  sub.textContent = SAVED.length ? (SAVED.length+' supplier'+(SAVED.length===1?'':'s')+' saved on this device.') : 'No suppliers saved yet.';
+  actions.style.display = SAVED.length ? 'flex' : 'none';
+  if(!SAVED.length){ body.innerHTML='<div class="sl-empty"><i class="ti ti-bookmark" style="font-size:30px;"></i><div>Tap the bookmark on any supplier to add it here.</div></div>'; return; }
+  body.innerHTML = SAVED.map((d,i)=>{
+    const site=d.website||'#';
+    const ws=d.wholesale_page && d.wholesale_page!=='null' && d.wholesale_page!==null ? d.wholesale_page : null;
+    const reg=d.region&&d.region!=='null'?d.region:(d.country||'');
+    return `<div class="sl-item">
+      <div class="sl-main">
+        <div class="sl-name">${esc(d.name)}</div>
+        <div class="sl-meta">${esc(d.type||'')}${reg?' · '+esc(reg):''}${d.offers_dropshipping?' · Dropshipping':''}</div>
+        <div class="sl-links"><a href="${esc(site)}" target="_blank" rel="noopener">Site ↗</a>${ws?` <a href="${esc(ws)}" target="_blank" rel="noopener">Trade account ↗</a>`:''}</div>
+      </div>
+      <button class="icon-btn" title="Remove" onclick="removeSaved(${i})"><i class="ti ti-x"></i></button>
+    </div>`;
+  }).join('');
+}
+function removeSaved(i){ SAVED.splice(i,1); persistSaved(); renderShortlist(); refreshGrid(); sClick(); }
+function clearShortlist(){ if(!SAVED.length) return; SAVED=[]; persistSaved(); renderShortlist(); refreshGrid(); }
+function csvCell(v){ return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'; }
+function exportCSV(){
+  if(!SAVED.length) return;
+  const cols=['Name','Type','Country','Region','Min order','Ships international','Dropshipping/FBM','Resale cert','Website','Wholesale page','Description'];
+  const rows=SAVED.map(d=>[d.name,d.type,d.country||'',d.region||'',d.min_order||'',d.ships_international?'Yes':'No',d.offers_dropshipping?'Yes':'No',d.requires_resale_cert?'Required':'Not required',d.website||'',(d.wholesale_page&&d.wholesale_page!=='null')?d.wholesale_page:'',d.description||'']);
+  const csv=[cols.map(csvCell).join(','),...rows.map(r=>r.map(csvCell).join(','))].join('\r\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download='surti-sourcing-atlas-shortlist.csv'; document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },120); sDone();
+}
+function copyShortlist(){
+  if(!SAVED.length) return;
+  const text=SAVED.map(d=>`${d.name} — ${d.type||''}${d.region?' ('+d.region+')':''}\n${d.website||''}${(d.wholesale_page&&d.wholesale_page!=='null')?'\nWholesale: '+d.wholesale_page:''}`).join('\n\n');
+  if(navigator.clipboard) navigator.clipboard.writeText(text);
+  sSelect();
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && document.getElementById('shortlistModal').style.display==='flex') closeShortlist(); });
+updateSavedCount();
+
 // ════════════ SEARCH ════════════
 let shownList = [];
 let shownNames = new Set();
@@ -598,7 +763,7 @@ async function run(append){
 
   try{
     const resp=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({category:selected,country:countryVal,region:stateVal,dropship:dropOnly,exclude:Array.from(shownNames)})});
+      body:JSON.stringify({category:selected,country:countryVal,region:stateVal,dropship:dropOnly,exclude:Array.from(shownNames),code:ACCESS_CODE})});
     const data=await resp.json();
     clearInterval(iv); bar.style.width='100%';
     if(data.error) throw new Error(data.error);
@@ -607,9 +772,13 @@ async function run(append){
     clearInterval(iv); status.classList.remove('show'); go.disabled=false; if(moreBtn) moreBtn.disabled=false;
     results.classList.add('show'); sError();
     if(!append){
-      grid.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v5 M12 16h.01"/></svg><div style="font-weight:600;color:var(--text);margin-bottom:6px;">Search hit a snag</div><div style="font-size:13px;">${(err.message||'Please try again').replace(/</g,'')}. Check your API key & deployment, then retry.</div></div>`;
+      const msg=(err.message||'Please try again').replace(/</g,'');
+      const isLimit=/limit|wait|tomorrow|short time|access code/i.test(msg);
+      const tail=isLimit?'':'. Check your API key & deployment, then retry.';
+      const head=isLimit?'Hold on a moment':'Search hit a snag';
+      grid.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v5 M12 16h.01"/></svg><div style="font-weight:600;color:var(--text);margin-bottom:6px;">${head}</div><div style="font-size:13px;">${msg}${tail}</div></div>`;
       results.scrollIntoView({behavior:'smooth'});
-    } else { document.getElementById('moreHint').textContent='Could not load more — try again.'; }
+    } else { document.getElementById('moreHint').textContent='Could not load more — please wait a moment and try again.'; }
   }
 }
 
@@ -625,8 +794,11 @@ function cardHTML(d, idx){
   const based=ctry && reg && !reg.includes(ctry) ? esc(reg)+', '+esc(ctry) : esc(reg);
   const ds=d.offers_dropshipping===true;
   const num=String(idx+1).padStart(2,'0');
+  const sid=savedId(d);
+  const isSaved=SAVED.some(s=>savedId(s)===sid);
   return `<article class="card" style="animation-delay:${(idx%10)*0.06}s">
     <div class="card-idx">${num}</div>
+    <button class="save-btn ${isSaved?'on':''}" title="Save to shortlist" onclick="toggleSaveByIndex(${idx})"><i class="ti ti-bookmark"></i></button>
     <div class="card-name">${esc(d.name)}</div>
     <span class="pill ${pcl}">${esc(d.type||'Wholesaler')}</span>${ds?`<span class="pill ds">Dropshipping / FBM</span>`:''}
     <p class="card-desc">${esc(d.description||'')}</p>
