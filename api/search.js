@@ -182,20 +182,36 @@ Rules:
 - Monetary amounts should be in ${c.currency}.`;
 
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 3000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 6 }],
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    // Abort our own request a little before Vercel's 60s function limit,
+    // so we can return clean JSON instead of a platform timeout page.
+    const ac = new AbortController();
+    const killer = setTimeout(() => ac.abort(), 52000);
+
+    let r;
+    try {
+      r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 2600,
+          tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 5 }],
+          messages: [{ role: 'user', content: prompt }]
+        }),
+        signal: ac.signal
+      });
+    } catch (e) {
+      clearTimeout(killer);
+      if (e.name === 'AbortError') {
+        return res.status(504).json({ error: 'The search took too long this time. Please try again.' });
+      }
+      throw e;
+    }
+    clearTimeout(killer);
 
     if (!r.ok) {
       const t = await r.text();
