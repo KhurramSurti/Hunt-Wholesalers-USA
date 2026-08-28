@@ -832,7 +832,10 @@ async function run(append){
   try{
     const resp=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({category:selected,country:countryVal,region:stateVal,dropship:dropOnly,exclude:Array.from(shownNames),code:ACCESS_CODE})});
-    const data=await resp.json();
+    const raw=await resp.text();
+    let data;
+    try { data=JSON.parse(raw); }
+    catch(_){ throw new Error(resp.status>=500 ? 'The search took too long or the server had a hiccup. Please try again in a moment.' : 'Unexpected response. Please try again.'); }
     clearInterval(iv); bar.style.width='100%';
     if(data.error) throw new Error(data.error);
     setTimeout(()=>{ status.classList.remove('show'); go.disabled=false; if(moreBtn) moreBtn.disabled=false; render(data,append); },450);
@@ -841,7 +844,7 @@ async function run(append){
     results.classList.add('show'); sError();
     if(!append){
       const msg=(err.message||'Please try again').replace(/</g,'');
-      const isLimit=/limit|wait|tomorrow|short time|access code/i.test(msg);
+      const isLimit=/limit|wait|tomorrow|short time|access code|too long|hiccup|try again/i.test(msg);
       const tail=isLimit?'':'. Check your API key & deployment, then retry.';
       const head=isLimit?'Hold on a moment':'Search hit a snag';
       grid.innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v5 M12 16h.01"/></svg><div style="font-weight:600;color:var(--text);margin-bottom:6px;">${head}</div><div style="font-size:13px;">${msg}${tail}</div></div>`;
