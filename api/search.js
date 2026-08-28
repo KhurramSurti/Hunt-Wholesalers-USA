@@ -127,26 +127,13 @@ export default async function handler(req, res) {
     ? `\n\nIMPORTANT: Do NOT include any of these companies — they have already been shown. Find COMPLETELY DIFFERENT ones:\n${excludeList.map(n => '- ' + n).join('\n')}`
     : '';
 
-  const prompt = `You are a wholesale sourcing research expert. Search the web and find 8-10 authentic, legitimate ${c.demonym} wholesale distributors, wholesalers and suppliers for this category: "${safeCategory}".
+  const prompt = `You are a wholesale sourcing expert. Using a few quick web searches, find 6-8 authentic, established ${c.demonym} wholesale distributors, wholesalers or suppliers for this category: "${safeCategory}".
 
-PRIORITISE RELIABILITY AND TRACK RECORD ABOVE ALL ELSE. Strongly prefer companies that are:
-- Well-established and long-operating (ideally several years or decades in business).
-- Reputable, with a verifiable real-world presence (physical address, registered business, working professional website).
-- Known/trusted in their industry (positive reputation, trade-association membership, recognised brand, or established trade customer base).
-Rank the results so the MOST established and reliable suppliers appear FIRST. Avoid brand-new, unverified, thin, or suspicious operations.
+Prefer well-established, reputable companies that have a real, working website; list the most reliable first. Never invent companies — each must be real and findable on the web. Do NOT include Amazon, eBay, Alibaba, AliExpress, Walmart or Etsy.
 
-QUALITY OVER QUANTITY: Only include a supplier if you are confident it is a genuine, legitimate, established business with a real working website. If you cannot verify a company is real and reputable, DO NOT include it — it is better to return fewer high-quality, verified suppliers than to pad the list with weak, unverified, or doubtful ones. Never invent companies or details; every supplier must be real and findable on the web.
+${locationLine}${dropshipLine}${excludeLine}
 
-${locationLine}${dropshipLine}
-
-For each one you MUST:
-1. Confirm it is a real, established company in ${safeCountry} with a working website and verifiable track record.
-2. Estimate how long it has been in business (founding year if findable).
-3. Check whether it offers wholesale / trade / reseller accounts.
-4. Find the direct URL to their wholesale account registration or wholesale inquiry page if it exists.
-5. Determine whether they offer dropshipping / FBM fulfilment.${excludeLine}
-
-Respond with ONLY valid JSON — no markdown, no code fences, no commentary. Use this exact structure:
+Work efficiently: run only a few web searches, then respond. Respond with ONLY valid JSON — no markdown, no code fences, no commentary:
 {
   "category": "${safeCategory}",
   "country": "${safeCountry}",
@@ -155,37 +142,30 @@ Respond with ONLY valid JSON — no markdown, no code fences, no commentary. Use
     {
       "name": "Company Name",
       "type": "Distributor",
-      "region": "Region or state within ${safeCountry}",
+      "region": "Home region/state within ${safeCountry}, or the country if nationwide",
       "website": "https://www.example.com",
-      "wholesale_page": "https://www.example.com/wholesale",
+      "wholesale_page": "https://www.example.com/wholesale (or null)",
       "description": "Two short sentences: what they sell and who they serve.",
-      "established": "Founding year like '1998', or 'Est. 2005', or 'Long-established', or 'Unknown'",
       "min_order": "Minimum order in ${c.currency}, or 'Varies', or 'No minimum'",
       "ships_international": true,
       "requires_resale_cert": true,
-      "offers_dropshipping": true,
-      "dropship_note": "One short line on their dropshipping/FBM program, or '' if none.",
-      "notable": "One short reason this supplier is reliable/established (e.g. '25+ years, supplies major retailers')."
+      "offers_dropshipping": true
     }
   ]
 }
 
 Rules:
-- Order the array from MOST established/reliable to least.
 - "type" must be one of: "Distributor", "Wholesaler", "Dropshipper", "Supplier".
-- "region" is the company's home region/state within ${safeCountry}, or the country name if nationwide.
-- "established" should reflect real evidence (founding year, "since" text on their site, or industry knowledge); use 'Unknown' only if genuinely not findable.
-- "wholesale_page" should be null if you cannot find a specific wholesale page.
-- Only include genuinely ${c.demonym}, reputable companies that actually sell wholesale/bulk to retailers or resellers and have real working websites.
-- Do NOT include Amazon, eBay, Alibaba, AliExpress, Walmart, Etsy or general marketplaces. Focus on direct distributors, wholesalers and suppliers.
-- ships_international, requires_resale_cert and offers_dropshipping must be booleans (true/false).
-- Monetary amounts should be in ${c.currency}.`;
+- "wholesale_page" is null if there is no specific wholesale page.
+- Only real, reputable ${c.demonym} companies that sell wholesale/bulk to retailers or resellers.
+- ships_international, requires_resale_cert and offers_dropshipping must be booleans.
+- Monetary amounts in ${c.currency}. Most reliable suppliers first.`;
 
   try {
     // Abort our own request a little before Vercel's 60s function limit,
     // so we can return clean JSON instead of a platform timeout page.
     const ac = new AbortController();
-    const killer = setTimeout(() => ac.abort(), 52000);
+    const killer = setTimeout(() => ac.abort(), 55000);
 
     let r;
     try {
@@ -198,8 +178,8 @@ Rules:
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
-          max_tokens: 2600,
-          tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 5 }],
+          max_tokens: 2000,
+          tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }],
           messages: [{ role: 'user', content: prompt }]
         }),
         signal: ac.signal
